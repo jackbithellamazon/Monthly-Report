@@ -49,11 +49,11 @@ header h1 span{color:var(--accent);}
 
 /* Stats — horizontal list */
 .stat-list{display:flex;flex-direction:column;gap:0;}
-.stat-row{display:flex;align-items:center;justify-content:space-between;padding:11px 17px;border-bottom:1px solid var(--border);}
+.stat-row{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);gap:12px;}
 .stat-row:last-child{border-bottom:none;}
 .stat-row .sl{font-size:12px;color:var(--muted);font-weight:500;}
-.stat-row .sv{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.5px;}
-.stat-row .sb{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:1px;}
+.stat-row .sv{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.3px;min-width:100px;text-align:right;}
+.stat-row .sb{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:2px;}
 .stat-row .sb.g{color:var(--accent);}
 .stat-row .sb.r{color:var(--danger);}
 .stat-accent{border-left:3px solid var(--accent);}
@@ -68,9 +68,9 @@ header h1 span{color:var(--accent);}
 /* Provider target inputs — VA only */
 .tcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px;}
 .tcard h3{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;}
-.tgrid-hdr{display:grid;grid-template-columns:130px 90px 90px 90px 90px;gap:7px;margin-bottom:5px;}
+.tgrid-hdr{display:grid;grid-template-columns:150px 95px 95px 95px 100px;gap:7px;margin-bottom:5px;}
 .tgrid-hdr span{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;}
-.tgrid-row{display:grid;grid-template-columns:130px 90px 90px 90px 90px;align-items:center;gap:7px;margin-bottom:5px;}
+.tgrid-row{display:grid;grid-template-columns:150px 95px 95px 95px 100px;align-items:center;gap:7px;margin-bottom:5px;}
 .va-tag{font-size:9px;font-family:'DM Mono',monospace;padding:1px 5px;border-radius:3px;background:rgba(0,229,160,.12);color:var(--accent);margin-left:4px;}
 .cost-row{display:grid;grid-template-columns:130px 90px 1fr;align-items:center;gap:7px;margin-bottom:5px;}
 .tinput{background:var(--s2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:4px 7px;outline:none;width:100%;}
@@ -179,16 +179,18 @@ table.st tr:hover td{background:var(--s2);}
 </header>
 
 <div class="tabs">
+  <button class="tab" onclick="goTab('setup',this)">⚙️ Settings</button>
   <button class="tab active" onclick="goTab('dash',this)">📊 Overview</button>
   <button class="tab" onclick="goTab('providers',this)">🏭 Providers</button>
-  <button class="tab" onclick="goTab('bonus',this)">💰 Bonus</button>
+  <button class="tab" onclick="goTab('bonus',this)">👥 VAs</button>
   <button class="tab" onclick="goTab('skus',this)">📋 All SKUs</button>
   <button class="tab" onclick="goTab('stores',this)">🏪 Stores</button>
   <button class="tab lav" onclick="goTab('lavarion',this)">🌿 Lavarion</button>
+  <button class="tab" onclick="goTab('settings',this)">⚙️ Settings</button>
 </div>
 
 <!-- ══ SETUP ══ -->
-<div id="tab-setup" class="wrap hidden">
+<div id="tab-setup" class="wrap">
   <div id="errMsg" class="err"></div>
   <div class="setup-card">
     <h2>Connect your Google Sheet</h2>
@@ -238,26 +240,6 @@ table.st tr:hover td{background:var(--s2);}
 
 <!-- ══ PROVIDERS ══ -->
 <div id="tab-providers" class="wrap hidden">
-  <div class="panel" style="margin-bottom:15px;">
-    <div class="ph"><h2>Targets &amp; Running Costs</h2><span class="ct">saved in your browser</span></div>
-    <div style="padding:15px;">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:11px;">Only <span style="font-family:'DM Mono',monospace;color:var(--accent);">Almera</span> and <span style="font-family:'DM Mono',monospace;color:var(--accent);">Zette</span> have bonus targets. All providers can have a monthly running cost.</p>
-      <div style="display:grid;grid-template-columns:130px 90px 90px 90px 90px;gap:7px;margin-bottom:5px;">
-        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Provider</span>
-        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Profit Target £</span>
-        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Real Profit Target £</span>
-        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Cost to Run £</span>
-        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Net Profit</span>
-      </div>
-      <div id="provTargetRows2"></div>
-      <div style="display:flex;gap:12px;margin-top:12px;">
-        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px;">TOTAL PROFIT TARGET £</label>
-          <input class="tinput" id="ovProfit2" type="number" placeholder="e.g. 8000" style="width:100px;" oninput="syncOverall()"></div>
-        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px;">TOTAL REAL PROFIT TARGET £</label>
-          <input class="tinput" id="ovReal2" type="number" placeholder="e.g. 3000" style="width:100px;" oninput="syncOverall()"></div>
-      </div>
-    </div>
-  </div>
   <div class="panel">
     <div class="ph"><h2>Provider Breakdown — A to Z</h2><span class="ct" id="provCt">—</span></div>
     <div style="overflow-x:auto;" id="provList"></div>
@@ -267,7 +249,7 @@ table.st tr:hover td{background:var(--s2);}
 <!-- ══ BONUS ══ -->
 <div id="tab-bonus" class="wrap hidden">
   <div class="panel" style="margin-bottom:15px;">
-    <div class="ph"><h2>VA Bonus — Almera &amp; Zette only</h2><span class="ct">auto-calculated from Provider Profit (col I)</span></div>
+    <div class="ph"><h2>VA Bonuses — Almera &amp; Zette only</h2><span class="ct">auto-calculated from Provider Profit (col I)</span></div>
     <div style="padding:9px 16px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
       <span style="font-size:10px;color:var(--muted);margin-right:3px;">TIERS:</span>
       <span class="badge tman">≥£2000 Manual</span><span class="badge t11">≥£1600 → 11.5%</span>
@@ -418,12 +400,11 @@ function extractSheetId(url){
 // ── Sync from Google Sheet ──
 async function syncSheet(){
   sheetId='1oRyymp_9DQ8UXDMspVAONid6XfVWSWk61j0hkbZztBQ';
-  if(!sheetId){
-    showErr('Sheet ID not configured.');return;
-  }
   setStatus('loading');
   document.getElementById('syncBtn').disabled=true;
-  var csvUrl='https://docs.google.com/spreadsheets/d/'+sheetId+'/export?format=csv&gid=0';
+  // Tab name matches month label e.g. "March 2026"
+  var tabName=getMonthLabel();
+  var csvUrl='https://docs.google.com/spreadsheets/d/'+sheetId+'/gviz/tq?tqx=out:csv&sheet='+encodeURIComponent(tabName);
   try{
     var resp=await fetch(csvUrl);
     if(!resp.ok)throw new Error('Could not load sheet. Make sure it is set to "Anyone with link can view".');
@@ -437,7 +418,7 @@ async function syncSheet(){
     setStatus('ok');
     renderAll();
     buildTargetRows();
-    goTab('dash',document.querySelectorAll('.tab')[0]);
+    goTab('dash',document.querySelectorAll('.tab')[1]);
     hideErr();
   }catch(e){
     setStatus('err');
@@ -513,6 +494,74 @@ function syncOverall(){
   if(v2&&r){r.value=v2.value;}
   saveSettings();renderAll();
 }
+function syncOvFromSettings(){
+  var p=document.getElementById('ovProfitS'),r=document.getElementById('ovRealS');
+  var p2=document.getElementById('ovProfit'),r2=document.getElementById('ovReal');
+  var p3=document.getElementById('ovProfit2'),r3=document.getElementById('ovReal2');
+  if(p&&p2)p2.value=p.value;if(p&&p3)p3.value=p.value;
+  if(r&&r2)r2.value=r.value;if(r&&r3)r3.value=r.value;
+  saveSettings();renderAll();
+}
+function buildSettingsRows(){
+  var html='';
+  allProviders.forEach(function(p){
+    var va=isVA(p),ps=provSumm[p]||{};
+    var cost=provCost[p]||'';
+    var net=ps.provProfit!==undefined&&cost!==''?fmt(ps.provProfit-parseFloat(cost)):'—';
+    var netColor=ps.provProfit!==undefined&&cost!==''?(ps.provProfit-parseFloat(cost))>=0?'var(--accent)':'var(--danger)':'var(--muted)';
+    html+='<div style="display:grid;grid-template-columns:140px 95px 95px 95px 110px;align-items:center;gap:8px;margin-bottom:6px;">'+
+      '<span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(p)+(va?'<span class="va-tag">VA</span>':'')+'</span>'+
+      (va?'<input class="tinput" id="stp_'+eid(p)+'" type="number" placeholder="£" value="'+(provTgtP[p]||'')+'" oninput="readTargetsFromSettings()">':'<span style="color:var(--muted);font-size:11px;padding-left:8px;">—</span>')+
+      (va?'<input class="tinput" id="str_'+eid(p)+'" type="number" placeholder="£" value="'+(provTgtR[p]||'')+'" oninput="readTargetsFromSettings()">':'<span style="color:var(--muted);font-size:11px;padding-left:8px;">—</span>')+
+      '<input class="tinput" id="stc_'+eid(p)+'" type="number" placeholder="£" value="'+(provCost[p]||'')+'" oninput="readTargetsFromSettings();updateSettingsNet(''+eid(p)+'',''+p+'')">'+
+      '<span id="snp_'+eid(p)+'" class="mono" style="font-size:12px;color:'+netColor+';">'+net+'</span>'+
+    '</div>';
+  });
+  var el=document.getElementById('settingsProvRows');
+  if(el)el.innerHTML=html||'<p style="font-size:12px;color:var(--muted);">Load data first.</p>';
+  renderCoveredCost();
+}
+function updateSettingsNet(e,p){
+  var ci=document.getElementById('stc_'+e),ni=document.getElementById('snp_'+e);
+  if(!ci||!ni)return;
+  var ps=provSumm[p]||{};var cost=parseFloat(ci.value)||0;
+  if(ps.provProfit!==undefined){var net=ps.provProfit-cost;ni.textContent=fmt(net);ni.style.color=net>=0?'var(--accent)':'var(--danger)';}
+  else{ni.textContent='—';ni.style.color='var(--muted)';}
+}
+function readTargetsFromSettings(){
+  provTgtP={};provTgtR={};provCost={};
+  allProviders.forEach(function(p){
+    var pi=document.getElementById('stp_'+eid(p));
+    var ri=document.getElementById('str_'+eid(p));
+    var ci=document.getElementById('stc_'+eid(p));
+    if(pi&&pi.value!=='')provTgtP[p]=parseFloat(pi.value);
+    if(ri&&ri.value!=='')provTgtR[p]=parseFloat(ri.value);
+    if(ci&&ci.value!=='')provCost[p]=parseFloat(ci.value);
+  });
+  saveTargets();renderAll();
+}
+function renderCoveredCost(){
+  var el=document.getElementById('coveredCostList');if(!el)return;
+  var rows=allProviders.map(function(p){
+    var ps=provSumm[p]||{};
+    var pp=ps.provProfit!==undefined?ps.provProfit:null;
+    var cost=provCost[p]!==undefined?provCost[p]:null;
+    var net=pp!==null&&cost!==null?pp-cost:null;
+    var covered=cost!==null&&pp!==null?pp>=cost:null;
+    return{p:p,pp:pp,cost:cost,net:net,covered:covered};
+  });
+  el.innerHTML=rows.map(function(r){
+    return'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 17px;border-bottom:1px solid rgba(42,47,61,.4);">'+
+      '<div style="display:flex;align-items:center;gap:10px;flex:1;">'+
+        '<span style="font-size:13px;font-weight:700;width:130px;">'+esc(r.p)+'</span>'+
+        '<span style="font-size:12px;color:var(--muted);width:100px;">Cost: '+(r.cost!==null?fmt(r.cost):'not set')+'</span>'+
+        '<span style="font-size:12px;width:120px;">Prov Profit: '+(r.pp!==null?'<span class="mono '+(r.pp>=0?'pos':'neg')+'">'+fmt(r.pp)+'</span>':'<span style="color:var(--muted)">—</span>')+'</span>'+
+        '<span style="font-size:12px;font-weight:700;">Net: '+(r.net!==null?'<span style="color:'+(r.net>=0?'var(--accent)':'var(--danger)')+';">'+fmt(r.net)+'</span>':'<span style="color:var(--muted)">—</span>')+'</span>'+
+      '</div>'+
+      '<span class="badge '+(r.covered===null?'b-none':r.covered?'b-hit':'b-miss')+'">'+(r.covered===null?'No cost set':r.covered?'✓ Covered':'✗ Not covered')+'</span>'+
+    '</div>';
+  }).join('');
+}
 function buildTargetRows(){
   var html='';
   allProviders.forEach(function(p){
@@ -584,7 +633,7 @@ function uniqueAsins(){return new Set(skuRows.map(function(r){return r.asin;}).f
 function renderAll(){
   var ovP=parseFloat(document.getElementById('ovProfit').value)||null;
   var ovR=parseFloat(document.getElementById('ovReal').value)||null;
-  renderOverview(ovP,ovR);renderProviders();renderBonus();renderSKUs();renderStores();renderLavarion();
+  renderOverview(ovP,ovR);renderProviders();renderBonus();renderSKUs();renderStores();renderLavarion();buildSettingsRows();
 }
 
 // ══ OVERVIEW ══
@@ -603,7 +652,7 @@ function renderOverview(ovP,ovR){
   document.getElementById('statsPanel').innerHTML=
     '<div class="ph"><h2>This Month</h2><span class="ct">'+getMonthLabel()+'</span></div>'+
     '<div class="stat-list">'+
-    srow('stat-accent','Net Profit',fmtS(totalNet),totalCost>0?'after £'+totalCost.toFixed(0)+' running costs':'set costs in Providers tab','')+
+    srow('stat-accent','Net Profit',fmtS(totalNet),totalCost>0?'after £'+totalCost.toFixed(0)+' running costs':'set costs in Settings','')+
     srow('stat-blue','Total Profit (col D)',fmtS(totalP),ovP?pPct+'% of '+fmt(ovP):skuRows.length+' SKUs',ovP?(totalP>=ovP?'g':'r'):'')+
     srow('stat-warn','Real Profit (col K)',fmtS(totalR),ovR?rPct+'% of '+fmt(ovR):(psVals.length?'from provider summary':'no provider summary found'),ovR?(totalR>=ovR?'g':'r'):'')+
     srow('stat-purple','VA Bonus Due',totalBonus>0?fmt(totalBonus):'£0','Almera &amp; Zette only','')+
@@ -903,8 +952,13 @@ function renderLavarion(){
 function fmt(n){if(n===null||n===undefined)return'—';var s=n<0?'-':'';return s+'£'+Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
 function fmtS(n){var s=n<0?'-':'';var a=Math.abs(n);if(a>=1000)return s+'£'+(a/1000).toFixed(1)+'k';return s+'£'+a.toFixed(0);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function getMonthLabel(){var v=document.getElementById('monthSel').value.split('-');return v.length<2?'':new Date(v[0],v[1]-1,1).toLocaleString('default',{month:'long',year:'numeric'});}
-function srow(cls,lbl,val,sub,sc){return'<div class="stat-row '+cls+'"><div><div class="sl">'+lbl+'</div><div class="sb '+sc+'">'+sub+'</div></div><div style="text-align:right;"><div class="sv">'+val+'</div></div></div>';}
+function getMonthLabel(){
+  var v=document.getElementById('monthSel').value.split('-');
+  if(v.length<2)return'';
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return months[parseInt(v[1])-1]+' '+v[0];
+}
+function srow(cls,lbl,val,sub,sc){return'<div class="stat-row '+cls+'"><div style="flex:1;"><div class="sl">'+lbl+'</div><div class="sb '+sc+'">'+sub+'</div></div><div style="text-align:right;min-width:120px;"><div class="sv" style="font-size:20px;font-family:DM Mono,monospace;font-weight:700;">'+val+'</div></div></div>';}
 function tCell(target,hit,pct){
   if(target===undefined)return'<span class="badge b-none">No target</span>';
   return'<div style="min-width:130px;">'+
@@ -930,7 +984,7 @@ function init(){
       setStatus('ok');
       renderAll();
       buildTargetRows();
-      goTab('dash',document.querySelectorAll('.tab')[0]);
+      goTab('dash',document.querySelectorAll('.tab')[1]);
     }catch(e){setStatus('');}
   } else {
     setStatus('');
@@ -940,5 +994,42 @@ function init(){
 
 init();
 </script>
+
+<!-- ══ SETTINGS ══ -->
+<div id="tab-settings" class="wrap hidden">
+  <div class="panel" style="margin-bottom:15px;">
+    <div class="ph"><h2>⚙️ Settings — Targets &amp; Running Costs</h2><span class="ct">saved in your browser</span></div>
+    <div style="padding:15px;">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">
+        Only <span style="font-family:'DM Mono',monospace;color:var(--accent);">Almera</span> and 
+        <span style="font-family:'DM Mono',monospace;color:var(--accent);">Zette</span> have bonus targets. 
+        All providers can have a <strong style="color:var(--text);">Cost to Run</strong> — the monthly cost to operate that provider 
+        (VA wage + software + overhead). Net Profit = Provider Profit − Cost to Run.
+      </p>
+      <div style="display:grid;grid-template-columns:140px 95px 95px 95px 110px;gap:8px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+        <span style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Provider</span>
+        <span style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Profit Target</span>
+        <span style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Real Profit Target</span>
+        <span style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Cost to Run</span>
+        <span style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Net Profit Preview</span>
+      </div>
+      <div id="settingsProvRows"></div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:16px;flex-wrap:wrap;">
+        <div>
+          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.6px;text-transform:uppercase;">Overall Profit Target £</label>
+          <input class="tinput" id="ovProfitS" type="number" placeholder="e.g. 8000" style="width:110px;" oninput="syncOvFromSettings()">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.6px;text-transform:uppercase;">Overall Real Profit Target £</label>
+          <input class="tinput" id="ovRealS" type="number" placeholder="e.g. 3000" style="width:110px;" oninput="syncOvFromSettings()">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="ph"><h2>Covered Cost Summary</h2><span class="ct">all providers</span></div>
+    <div id="coveredCostList" style="padding:0;"></div>
+  </div>
+</div>
 </body>
 </html>
