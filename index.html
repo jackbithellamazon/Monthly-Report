@@ -6,103 +6,99 @@
 <title>Monthly Profit Report</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0f12;--surface:#13161b;--s2:#1a1e26;--border:#252a35;--text:#e8eaf0;--muted:#5a6278;--accent:#00e5a0;--blue:#3b82f6;--warn:#f59e0b;--danger:#ef4444;--purple:#a78bfa;}
+:root{--bg:#0f1117;--surface:#161920;--s2:#1c2029;--s3:#222635;--border:#2a2f3d;--text:#dde1ec;--muted:#606780;--accent:#00e5a0;--blue:#4f8ef7;--warn:#f5a623;--danger:#f05252;--purple:#9f7aea;--lav:#f472b6;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
-header{display:flex;align-items:center;justify-content:space-between;padding:13px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:200;}
-header h1{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.5px;}
+header{display:flex;align-items:center;justify-content:space-between;padding:13px 28px;border-bottom:1px solid var(--border);background:var(--surface);}
+header h1{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.4px;}
 header h1 span{color:var(--accent);}
-.hdr-r{display:flex;align-items:center;gap:10px;}
+.hdr-r{display:flex;align-items:center;gap:8px;}
+.msel{position:relative;}
+.msel select{appearance:none;-webkit-appearance:none;background:var(--s2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:7px 28px 7px 12px;cursor:pointer;outline:none;}
+.msel select:focus{border-color:var(--accent);}
+.msel::after{content:'▾';position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:11px;}
+.sync-btn{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;background:var(--accent);color:#000;border:none;border-radius:7px;padding:7px 14px;cursor:pointer;transition:opacity .15s;}
+.sync-btn:hover{opacity:.85;}
+.sync-btn:disabled{opacity:.5;cursor:not-allowed;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);}
+.status-dot.ok{background:var(--accent);}
+.status-dot.err{background:var(--danger);}
+.status-dot.loading{background:var(--warn);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 
-/* Clean month select */
-.msel-wrap{position:relative;}
-.msel-wrap select{appearance:none;-webkit-appearance:none;background:var(--s2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:7px 30px 7px 12px;cursor:pointer;outline:none;transition:border-color .15s;}
-.msel-wrap select:focus{border-color:var(--accent);}
-.msel-wrap::after{content:'▾';position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:11px;}
-
-.pill-status{font-family:'DM Mono',monospace;font-size:11px;padding:5px 11px;border-radius:20px;border:1px solid var(--border);}
-.ps-ok{color:var(--accent);border-color:rgba(0,229,160,.3);background:rgba(0,229,160,.07);}
-.ps-saving{color:var(--warn);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.07);}
-.ps-idle{color:var(--muted);background:var(--s2);}
-
-.tabs{display:flex;gap:3px;padding:13px 28px 0;background:var(--surface);border-bottom:1px solid var(--border);}
-.tab{font-size:12px;font-weight:600;padding:8px 15px;border-radius:6px 6px 0 0;border:1px solid transparent;color:var(--muted);cursor:pointer;background:none;transition:all .15s;}
+.tabs{display:flex;gap:2px;padding:12px 28px 0;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab{font-size:12px;font-weight:600;padding:7px 14px;border-radius:6px 6px 0 0;border:1px solid transparent;color:var(--muted);cursor:pointer;background:none;white-space:nowrap;transition:all .15s;}
 .tab:hover{color:var(--text);}
 .tab.active{background:var(--bg);border-color:var(--border);border-bottom-color:var(--bg);color:var(--text);}
 
 .wrap{max-width:1480px;margin:0 auto;padding:20px 28px;}
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
-.ph{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:15px;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:11px 17px;border-bottom:1px solid var(--border);}
 .ph h2{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
 .ct{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);background:var(--s2);padding:3px 8px;border-radius:4px;}
 
-/* Import */
-.ibox{border:2px dashed var(--border);border-radius:10px;padding:18px;margin-bottom:14px;transition:border-color .2s;}
-.ibox:hover{border-color:var(--accent);}
-.ibox label{display:block;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.9px;text-transform:uppercase;margin-bottom:7px;}
-textarea{width:100%;height:130px;background:var(--s2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:10px;resize:vertical;outline:none;}
-textarea:focus{border-color:var(--accent);}
-textarea::placeholder{color:var(--muted);}
+/* Setup panel */
+.setup-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;margin-bottom:15px;}
+.setup-card h2{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;margin-bottom:6px;}
+.setup-card p{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:12px;}
+.url-row{display:flex;gap:8px;align-items:center;}
+.url-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:8px 12px;outline:none;}
+.url-input:focus{border-color:var(--accent);}
+.url-input::placeholder{color:var(--muted);}
 
-.btn{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;border:none;border-radius:7px;padding:9px 20px;cursor:pointer;transition:all .15s;}
-.btn-g{background:var(--accent);color:#000;}
-.btn-g:hover{opacity:.85;transform:translateY(-1px);}
-.btn-ghost{background:var(--s2);color:var(--muted);border:1px solid var(--border);}
-.btn-ghost:hover{color:var(--text);}
+/* Stats — horizontal list */
+.stat-list{display:flex;flex-direction:column;gap:0;}
+.stat-row{display:flex;align-items:center;justify-content:space-between;padding:11px 17px;border-bottom:1px solid var(--border);}
+.stat-row:last-child{border-bottom:none;}
+.stat-row .sl{font-size:12px;color:var(--muted);font-weight:500;}
+.stat-row .sv{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.5px;}
+.stat-row .sb{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:1px;}
+.stat-row .sb.g{color:var(--accent);}
+.stat-row .sb.r{color:var(--danger);}
+.stat-accent{border-left:3px solid var(--accent);}
+.stat-blue{border-left:3px solid var(--blue);}
+.stat-warn{border-left:3px solid var(--warn);}
+.stat-purple{border-left:3px solid var(--purple);}
+.stat-muted{border-left:3px solid var(--muted);}
 
-/* Stats */
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:16px;}
-.kc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px 17px;position:relative;overflow:hidden;}
-.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.kc.g::before{background:var(--accent);}
-.kc.b::before{background:var(--blue);}
-.kc.w::before{background:var(--warn);}
-.kc.p::before{background:var(--purple);}
-.kc.m::before{background:var(--muted);}
-.kc .kl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px;}
-.kc .kv{font-family:'Syne',sans-serif;font-size:25px;font-weight:800;letter-spacing:-1px;line-height:1;}
-.kc .ks{font-size:11px;font-family:'DM Mono',monospace;margin-top:4px;color:var(--muted);}
-.kc .ks.g{color:var(--accent);}
-.kc .ks.r{color:var(--danger);}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:15px;}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:15px;}
 
-.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
-
-/* Target inputs */
+/* Provider target inputs — VA only */
 .tcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px;}
-.tcard h3{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:9px;}
-.tgrid-hdr{display:grid;grid-template-columns:130px 85px 85px 85px 85px;gap:7px;margin-bottom:5px;}
+.tcard h3{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;}
+.tgrid-hdr{display:grid;grid-template-columns:130px 90px 90px 90px 90px;gap:7px;margin-bottom:5px;}
 .tgrid-hdr span{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;}
-.tgrid-row{display:grid;grid-template-columns:130px 85px 85px 85px 85px;align-items:center;gap:7px;margin-bottom:5px;}
-.tgrid-row .pnm{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tgrid-row{display:grid;grid-template-columns:130px 90px 90px 90px 90px;align-items:center;gap:7px;margin-bottom:5px;}
 .va-tag{font-size:9px;font-family:'DM Mono',monospace;padding:1px 5px;border-radius:3px;background:rgba(0,229,160,.12);color:var(--accent);margin-left:4px;}
+.cost-row{display:grid;grid-template-columns:130px 90px 1fr;align-items:center;gap:7px;margin-bottom:5px;}
 .tinput{background:var(--s2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:4px 7px;outline:none;width:100%;}
 .tinput:focus{border-color:var(--accent);}
-.tinput:disabled{opacity:.35;cursor:not-allowed;}
 
-/* Provider table */
-.ptable{width:100%;border-collapse:collapse;}
-.ptable th{text-align:left;padding:9px 13px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;background:var(--s2);border-bottom:1px solid var(--border);}
-.ptable th.r{text-align:right;}
-.ptable td{padding:10px 13px;border-bottom:1px solid rgba(37,42,53,.5);vertical-align:middle;}
-.ptable tr:last-child td{border-bottom:none;}
-.ptable tr:hover td{background:var(--s2);}
+/* Provider breakdown list */
+.prov-list{width:100%;}
+.prov-hdr{display:grid;grid-template-columns:160px 60px 110px 160px 110px 90px 110px 160px 60px 110px;gap:8px;padding:9px 15px;background:var(--s2);border-bottom:1px solid var(--border);}
+.prov-hdr span{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;}
+.prov-hdr span.r{text-align:right;}
+.prov-item{display:grid;grid-template-columns:160px 60px 110px 160px 110px 90px 110px 160px 60px 110px;gap:8px;padding:10px 15px;border-bottom:1px solid rgba(42,47,61,.5);align-items:center;}
+.prov-item:last-child{border-bottom:none;}
+.prov-item:hover{background:var(--s2);}
+.prov-name{font-size:13px;font-weight:700;}
+.r{text-align:right;}
 
-/* Target cell */
-.tc-wrap{min-width:150px;}
-.tc-top{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
-.prog{width:100%;background:var(--s2);border-radius:3px;height:4px;overflow:hidden;}
+/* Progress bar */
+.prog{background:var(--s2);border-radius:3px;height:4px;margin-top:3px;overflow:hidden;}
 .prog-fill{height:100%;border-radius:3px;}
 .pf-g{background:var(--accent);}
 .pf-r{background:var(--danger);}
-.tc-sub{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
 
 /* Badges */
 .badge{display:inline-block;font-size:10px;font-family:'DM Mono',monospace;font-weight:700;padding:2px 7px;border-radius:4px;}
 .b-hit{background:rgba(0,229,160,.15);color:var(--accent);}
-.b-miss{background:rgba(239,68,68,.12);color:var(--danger);}
+.b-miss{background:rgba(240,82,82,.12);color:var(--danger);}
 .b-none{background:var(--s2);color:var(--muted);}
-.b-flag{background:rgba(239,68,68,.15);color:var(--danger);}
+.b-flag{background:rgba(240,82,82,.15);color:var(--danger);}
 .pill{display:inline-block;font-size:10px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:4px;background:var(--s2);border:1px solid var(--border);cursor:pointer;}
 .pill:hover{border-color:var(--accent);}
 .mono{font-family:'DM Mono',monospace;font-size:12px;}
@@ -110,15 +106,15 @@ textarea::placeholder{color:var(--muted);}
 .neg{color:var(--danger);font-family:'DM Mono',monospace;}
 .tr{text-align:right;}
 
-/* Bonus */
+/* Bonus tiers */
 .t11{background:rgba(0,229,160,.18);color:var(--accent);}
 .t10{background:rgba(0,229,160,.12);color:#00c988;}
-.t7{background:rgba(245,158,11,.15);color:var(--warn);}
-.t5{background:rgba(245,158,11,.1);color:#e8961a;}
-.t3{background:rgba(239,68,68,.12);color:var(--danger);}
-.t2{background:rgba(239,68,68,.08);color:#e05050;}
+.t7{background:rgba(245,166,35,.15);color:var(--warn);}
+.t5{background:rgba(245,166,35,.1);color:#e8961a;}
+.t3{background:rgba(240,82,82,.12);color:var(--danger);}
+.t2{background:rgba(240,82,82,.08);color:#e05050;}
 .tno{background:var(--s2);color:var(--muted);}
-.tman{background:rgba(167,139,250,.15);color:var(--purple);}
+.tman{background:rgba(159,122,234,.15);color:var(--purple);}
 .tna{background:var(--s2);color:var(--muted);font-style:italic;}
 
 /* SKU table */
@@ -132,118 +128,109 @@ table.st{width:100%;border-collapse:collapse;font-size:12px;}
 table.st th{text-align:left;padding:8px 11px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;background:var(--s2);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;z-index:2;}
 table.st th:hover{color:var(--text);}
 table.st th.srt{color:var(--accent);}
-table.st td{padding:7px 11px;border-bottom:1px solid rgba(37,42,53,.4);vertical-align:middle;white-space:nowrap;}
+table.st td{padding:7px 11px;border-bottom:1px solid rgba(42,47,61,.4);vertical-align:middle;white-space:nowrap;}
 table.st tr:hover td{background:var(--s2);}
 .ttc{max-width:220px;overflow:hidden;text-overflow:ellipsis;}
-.tsc{max-width:135px;overflow:hidden;text-overflow:ellipsis;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+.tsc{max-width:130px;overflow:hidden;text-overflow:ellipsis;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
 .tscroll{max-height:540px;overflow-y:auto;}
-
-/* Inline edit select */
-.edit-sel{background:var(--s2);border:1px solid var(--accent);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:2px 6px;outline:none;}
+.edit-sel{background:var(--s2);border:1px solid var(--accent);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:2px 5px;outline:none;}
 
 /* Store grid */
-.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;padding:13px;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:9px;padding:13px;}
 .scard{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;}
 .scard .sn{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .scard .sv{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;}
 .scard .ss{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:2px;}
 
-/* Bonus cards */
-.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;padding:14px;}
-.bcard{border:1px solid var(--border);border-radius:8px;padding:13px;}
-.bcard .bp{font-size:12px;font-weight:700;margin-bottom:3px;}
-.bcard .bv{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:3px;}
-.bcard .bd{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);line-height:1.7;}
+/* Lavarion tab */
+.lav-header{background:linear-gradient(135deg,rgba(244,114,182,.08),rgba(159,122,234,.05));border-bottom:1px solid var(--border);padding:16px 20px;}
+.lav-header h2{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--lav);}
+.lav-header p{font-size:12px;color:var(--muted);margin-top:3px;}
+.lav-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:15px;}
+.lav-kc{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:14px 16px;border-top:2px solid var(--lav);}
+.lav-kc .lk{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin-bottom:4px;}
+.lav-kc .lv{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--lav);}
+.lav-kc .ls{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:3px;}
+.margin-bar{height:6px;border-radius:3px;background:var(--s2);overflow:hidden;margin-top:4px;}
+.margin-fill{height:100%;border-radius:3px;background:var(--lav);}
 
 /* Misc */
-.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef8080;font-size:12px;font-family:'DM Mono',monospace;padding:10px 14px;border-radius:7px;margin-bottom:12px;display:none;}
+.err{background:rgba(240,82,82,.1);border:1px solid rgba(240,82,82,.3);color:#f08080;font-size:12px;font-family:'DM Mono',monospace;padding:10px 14px;border-radius:7px;margin-bottom:12px;display:none;}
 .slbl{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:14px 0 7px;}
-.pvbox{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:11px;margin-bottom:12px;display:none;}
-.pvrow{display:flex;gap:16px;flex-wrap:wrap;}
-.pvrow .pi{font-size:12px;}
-.pvrow .pi span{font-family:'DM Mono',monospace;color:var(--accent);font-weight:600;}
-.info-bar{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);padding:6px 28px;background:var(--surface);border-bottom:1px solid var(--border);display:none;}
-.info-bar span{color:var(--accent);}
 .hidden{display:none!important;}
 #loadScr{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:12px;}
 #loadScr p{font-size:13px;color:var(--muted);}
 .spin{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg);}}
+.empty{text-align:center;padding:40px;font-size:13px;color:var(--muted);}
 </style>
 </head>
 <body>
 
-<div id="loadScr"><div class="spin"></div><p>Loading report…</p></div>
+<div id="loadScr"><div class="spin"></div><p>Loading…</p></div>
 
 <header>
   <h1>Monthly <span>Profit</span> Report</h1>
   <div class="hdr-r">
-    <div class="pill-status ps-idle" id="savePill">No data</div>
-    <div class="msel-wrap"><select id="monthSel" onchange="onMonthChange()"></select></div>
+    <div id="statusDot" class="status-dot"></div>
+    <div class="msel"><select id="monthSel" onchange="onMonthChange()"></select></div>
+    <button class="sync-btn" id="syncBtn" onclick="syncSheet()">↻ Refresh Data</button>
   </div>
 </header>
-<div class="info-bar" id="infoBar"></div>
 
 <div class="tabs">
-  <button class="tab active" onclick="goTab('import',this)">📥 Import &amp; Targets</button>
-  <button class="tab" onclick="goTab('dash',this)">📊 Overview</button>
+  <button class="tab active" onclick="goTab('dash',this)">📊 Overview</button>
   <button class="tab" onclick="goTab('providers',this)">🏭 Providers</button>
   <button class="tab" onclick="goTab('bonus',this)">💰 Bonus</button>
   <button class="tab" onclick="goTab('skus',this)">📋 All SKUs</button>
   <button class="tab" onclick="goTab('stores',this)">🏪 Stores</button>
+  <button class="tab lav" onclick="goTab('lavarion',this)">🌿 Lavarion</button>
 </div>
 
-<!-- ══ IMPORT ══ -->
-<div id="tab-import" class="wrap">
+<!-- ══ SETUP ══ -->
+<div id="tab-setup" class="wrap hidden">
   <div id="errMsg" class="err"></div>
-  <div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:10px 15px;margin-bottom:13px;font-size:12px;color:#93c5fd;line-height:1.6;">
-    <strong>Workflow:</strong> Tag Provider &amp; Store in Google Sheet via dropdowns as normal → select all rows including header → paste below → set targets &amp; costs → <strong>Save &amp; Publish</strong>. Team refreshes and sees the updated report.
+  <div class="setup-card">
+    <h2>Connect your Google Sheet</h2>
+    <p>Paste your Google Sheet's share URL below. Make sure the sheet is set to <strong>"Anyone with the link can view"</strong>.<br>
+    Once connected, click <strong>Refresh Data</strong> to load. Your sheet URL is saved in your browser so you only need to do this once.</p>
+    <div class="url-row">
+      <input class="url-input" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit?usp=sharing" oninput="saveUrl()">
+      <button class="sync-btn" onclick="syncSheet()">Connect &amp; Load →</button>
+    </div>
+    <p style="margin-top:10px;font-size:11px;color:var(--muted);">Your URL is saved locally in your browser. The sheet must be publicly viewable (not editable) for this to work.</p>
   </div>
-  <div class="ibox">
-    <label>Paste full Google Sheet — include header row (cols A–O)</label>
-    <textarea id="pasteArea" placeholder="Ctrl+A in your Google Sheet then paste here.&#10;Provider and Store already tagged via dropdowns — tool reads them directly.&#10;&#10;Reads: A=Title · B=ASIN · C=SKU · D=Profit · E=Provider · F=Store · H=Prov Tracker · I=Prov Profit · J=Cost · K=Real Profit · M=Bonus · O=Store Tracker"></textarea>
-  </div>
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-    <input type="file" id="csvFile" accept=".csv,.tsv,.txt" style="font-size:12px;color:var(--muted);">
-    <button class="btn btn-ghost" style="font-size:11px;padding:5px 12px;" onclick="loadSample()">Load sample data</button>
-  </div>
-  <div class="pvbox" id="pvBox"><div class="pvrow" id="pvRow"></div></div>
 
-  <div id="tgtSection" class="hidden">
-    <div class="slbl">Monthly Targets &amp; Running Costs</div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:11px;">
-      <strong style="color:var(--text);">Cost to Run</strong> = monthly cost to operate that provider (VA wage + software + overhead). Net Profit = Provider Profit (col I) − Cost to Run.
-      VA bonus eligible: <span style="font-family:'DM Mono',monospace;color:var(--accent);">Almera, Zette</span>
-    </p>
-    <div class="tcard" style="margin-bottom:13px;">
-      <div class="tgrid-hdr">
-        <span>Provider</span>
-        <span>Profit Target £</span>
-        <span>Real Profit Target £</span>
-        <span>Cost to Run £</span>
-        <span>Net Profit</span>
-      </div>
-      <div id="provTargetRows"></div>
+  <div class="slbl">Monthly Targets &amp; Running Costs</div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:11px;">
+    Only <span style="font-family:'DM Mono',monospace;color:var(--accent);">Almera</span> and <span style="font-family:'DM Mono',monospace;color:var(--accent);">Zette</span> have bonus targets. All providers can have a monthly running cost set.
+    These are saved in your browser.
+  </p>
+  <div class="tcard" style="margin-bottom:13px;">
+    <div class="tgrid-hdr">
+      <span>Provider</span><span>Profit Target £</span><span>Real Profit Target £</span><span>Cost to Run £</span><span>Net Profit</span>
     </div>
-    <div class="tcard" style="margin-bottom:15px;max-width:320px;">
-      <h3>🎯 Overall Targets</h3>
-      <div style="display:flex;gap:12px;margin-top:8px;">
-        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px;">TOTAL PROFIT £</label>
-          <input class="tinput" id="ovProfit" type="number" placeholder="e.g. 8000" style="width:100px;"></div>
-        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px;">TOTAL REAL PROFIT £</label>
-          <input class="tinput" id="ovReal" type="number" placeholder="e.g. 3000" style="width:100px;"></div>
-      </div>
+    <div id="provTargetRows"><p style="font-size:12px;color:var(--muted);padding:8px 0;">Load data first to see providers.</p></div>
+  </div>
+  <div class="tcard" style="margin-bottom:15px;max-width:320px;">
+    <h3>🎯 Overall Targets</h3>
+    <div style="display:flex;gap:12px;margin-top:8px;">
+      <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px;">TOTAL PROFIT £</label>
+        <input class="tinput" id="ovProfit" type="number" placeholder="e.g. 8000" style="width:100px;" oninput="saveSettings()"></div>
+      <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px;">TOTAL REAL PROFIT £</label>
+        <input class="tinput" id="ovReal" type="number" placeholder="e.g. 3000" style="width:100px;" oninput="saveSettings()"></div>
     </div>
-    <button class="btn btn-g" onclick="saveAndPublish()">💾 Save &amp; Publish to Team →</button>
   </div>
 </div>
 
 <!-- ══ OVERVIEW ══ -->
 <div id="tab-dash" class="wrap hidden">
-  <div class="stats" id="statsRow"></div>
   <div class="two">
-    <div id="provSummCard"></div>
-    <div id="storeSummCard"></div>
+    <div class="panel" id="statsPanel"></div>
+    <div>
+      <div id="provSummCard" style="margin-bottom:14px;"></div>
+      <div id="storeSummCard"></div>
+    </div>
   </div>
   <div class="slbl">Top 10 SKUs by Profit</div>
   <div class="panel" id="top10Panel"></div>
@@ -251,35 +238,48 @@ table.st tr:hover td{background:var(--s2);}
 
 <!-- ══ PROVIDERS ══ -->
 <div id="tab-providers" class="wrap hidden">
+  <div class="panel" style="margin-bottom:15px;">
+    <div class="ph"><h2>Targets &amp; Running Costs</h2><span class="ct">saved in your browser</span></div>
+    <div style="padding:15px;">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:11px;">Only <span style="font-family:'DM Mono',monospace;color:var(--accent);">Almera</span> and <span style="font-family:'DM Mono',monospace;color:var(--accent);">Zette</span> have bonus targets. All providers can have a monthly running cost.</p>
+      <div style="display:grid;grid-template-columns:130px 90px 90px 90px 90px;gap:7px;margin-bottom:5px;">
+        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Provider</span>
+        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Profit Target £</span>
+        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Real Profit Target £</span>
+        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Cost to Run £</span>
+        <span style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;">Net Profit</span>
+      </div>
+      <div id="provTargetRows2"></div>
+      <div style="display:flex;gap:12px;margin-top:12px;">
+        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px;">TOTAL PROFIT TARGET £</label>
+          <input class="tinput" id="ovProfit2" type="number" placeholder="e.g. 8000" style="width:100px;" oninput="syncOverall()"></div>
+        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:3px;">TOTAL REAL PROFIT TARGET £</label>
+          <input class="tinput" id="ovReal2" type="number" placeholder="e.g. 3000" style="width:100px;" oninput="syncOverall()"></div>
+      </div>
+    </div>
+  </div>
   <div class="panel">
-    <div class="ph"><h2>Provider Breakdown</h2><span class="ct" id="provCt">—</span></div>
-    <div style="overflow-x:auto;"><table class="ptable" id="provTable"></table></div>
+    <div class="ph"><h2>Provider Breakdown — A to Z</h2><span class="ct" id="provCt">—</span></div>
+    <div style="overflow-x:auto;" id="provList"></div>
   </div>
 </div>
 
 <!-- ══ BONUS ══ -->
 <div id="tab-bonus" class="wrap hidden">
   <div class="panel" style="margin-bottom:15px;">
-    <div class="ph">
-      <h2>VA Bonus — Almera &amp; Zette only</h2>
-      <span class="ct">auto-calculated from Provider Profit (col I)</span>
-    </div>
+    <div class="ph"><h2>VA Bonus — Almera &amp; Zette only</h2><span class="ct">auto-calculated from Provider Profit (col I)</span></div>
     <div style="padding:9px 16px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
       <span style="font-size:10px;color:var(--muted);margin-right:3px;">TIERS:</span>
-      <span class="badge tman">≥£2000 Manual</span>
-      <span class="badge t11">≥£1600 → 11.5%</span>
-      <span class="badge t10">≥£1250 → 10%</span>
-      <span class="badge t7">≥£1000 → 7.5%</span>
-      <span class="badge t5">≥£900 → 5%</span>
-      <span class="badge t3">≥£800 → 3.5%</span>
-      <span class="badge t2">≥£750 → 2.5%</span>
-      <span class="badge tno">&lt;£750 No bonus</span>
+      <span class="badge tman">≥£2000 Manual</span><span class="badge t11">≥£1600 → 11.5%</span>
+      <span class="badge t10">≥£1250 → 10%</span><span class="badge t7">≥£1000 → 7.5%</span>
+      <span class="badge t5">≥£900 → 5%</span><span class="badge t3">≥£800 → 3.5%</span>
+      <span class="badge t2">≥£750 → 2.5%</span><span class="badge tno">&lt;£750 No bonus</span>
     </div>
-    <div class="bgrid" id="bonusGrid"></div>
+    <div id="bonusContent" style="padding:15px;"></div>
   </div>
   <div class="panel">
     <div class="ph"><h2>Flag Check — Sheet vs Calculated</h2><span class="ct" id="flagCt">—</span></div>
-    <div style="overflow-x:auto;"><table class="ptable" id="flagTable"></table></div>
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;" id="flagTable"></table></div>
   </div>
 </div>
 
@@ -289,7 +289,7 @@ table.st tr:hover td{background:var(--s2);}
     <div class="ph">
       <h2>All SKUs</h2>
       <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:11px;color:var(--muted);">Click Provider or Store to edit</span>
+        <span style="font-size:11px;color:var(--muted);">Click Provider or Store pill to edit</span>
         <span class="ct" id="skuCt">—</span>
       </div>
     </div>
@@ -298,15 +298,11 @@ table.st tr:hover td{background:var(--s2);}
       <select id="fp" onchange="filterSKUs()"><option value="">All providers</option></select>
       <select id="fs" onchange="filterSKUs()"><option value="">All stores</option></select>
       <select id="fd" onchange="filterSKUs()">
-        <option value="">Any profit</option>
-        <option value="pos">Profit only</option>
-        <option value="neg">Loss only</option>
+        <option value="">Any profit</option><option value="pos">Profit only</option><option value="neg">Loss only</option>
       </select>
       <span class="fcnt" id="fcnt"></span>
     </div>
-    <div class="tscroll">
-      <div style="overflow-x:auto;"><table class="st" id="skuTable"></table></div>
-    </div>
+    <div class="tscroll"><div style="overflow-x:auto;"><table class="st" id="skuTable"></table></div></div>
   </div>
 </div>
 
@@ -318,17 +314,47 @@ table.st tr:hover td{background:var(--s2);}
   </div>
 </div>
 
+<!-- ══ LAVARION ══ -->
+<div id="tab-lavarion" class="wrap hidden">
+  <div class="panel">
+    <div class="lav-header">
+      <h2>🌿 Lavarion — Own Brand / PL / UB Insights</h2>
+      <p>Your own brand products. All SKUs where Provider = Lavarion.</p>
+    </div>
+    <div class="lav-stats" id="lavStats"></div>
+  </div>
+  <div class="two">
+    <div class="panel">
+      <div class="ph"><h2>Top SKUs by Profit</h2><span class="ct" id="lavSkuCt">—</span></div>
+      <div style="overflow-x:auto;"><table class="st" id="lavSkuTable"></table></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>Margin per Product</h2><span class="ct">profit / SKU</span></div>
+      <div id="lavMarginList" style="padding:0;"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="ph"><h2>Store Breakdown for Lavarion</h2><span class="ct">where sold</span></div>
+    <div class="sgrid" id="lavStoreGrid"></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><h2>Unique ASINs</h2><span class="ct" id="lavAsinCt">—</span></div>
+    <div id="lavAsinList" style="padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;"></div>
+  </div>
+</div>
+
 <script>
-// ── VA providers eligible for bonus ──
+// ── Constants ──
 var VA_LIST = ['Almera','Zette'];
 function isVA(p){return VA_LIST.indexOf(p)>-1;}
 
 // ── State ──
-var skuRows=[],provSumm={},provTgtP={},provTgtR={},provCost={};
-var sortCol=3,sortDir=-1,filtered=[];
-var allProviders=[],allStores=[];
+var skuRows=[], provSumm={}, provTgtP={}, provTgtR={}, provCost={};
+var sortCol=3, sortDir=-1, filtered=[];
+var allProviders=[], allStores=[];
+var sheetId='1oRyymp_9DQ8UXDMspVAONid6XfVWSWk61j0hkbZztBQ';
 
-// ── Month dropdown (clean select, no native date picker) ──
+// ── Month dropdown ──
 (function(){
   var sel=document.getElementById('monthSel'),now=new Date(),html='';
   for(var y=now.getFullYear();y>=now.getFullYear()-2;y--){
@@ -342,33 +368,132 @@ var allProviders=[],allStores=[];
   }
   sel.innerHTML=html;
 })();
-function onMonthChange(){}
-function getMonthLabel(){var v=document.getElementById('monthSel').value.split('-');return v.length<2?'':new Date(v[0],v[1]-1,1).toLocaleString('default',{month:'long',year:'numeric'});}
 
-// ── Storage ──
-async function saveShared(k,v){try{await window.storage.set(k,JSON.stringify(v),true);return true;}catch(e){return false;}}
-async function loadShared(k){try{var r=await window.storage.get(k,true);return r?JSON.parse(r.value):null;}catch(e){return null;}}
-
-// ── Init ──
-async function init(){
-  var saved=await loadShared('mpr_v3');
-  document.getElementById('loadScr').style.display='none';
-  if(saved&&saved.skuRows&&saved.skuRows.length){
-    skuRows=saved.skuRows;provSumm=saved.provSumm||{};
-    provTgtP=saved.provTgtP||{};provTgtR=saved.provTgtR||{};provCost=saved.provCost||{};
-    if(saved.ovProfit)document.getElementById('ovProfit').value=saved.ovProfit;
-    if(saved.ovReal)document.getElementById('ovReal').value=saved.ovReal;
-    if(saved.month){var sel=document.getElementById('monthSel');for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===saved.month){sel.selectedIndex=i;break;}}}
-    setSP('ps-ok','✓ Live · '+skuRows.length+' SKUs');
-    showInfo(saved.updatedAt);
-    renderAll();
-    goTab('dash',document.querySelectorAll('.tab')[1]);
+function onMonthChange(){
+  // Load cached data for that month if available
+  var key='mpr_data_'+document.getElementById('monthSel').value;
+  var cached=localStorage.getItem(key);
+  if(cached){
+    try{
+      var d=JSON.parse(cached);
+      skuRows=d.skuRows||[];provSumm=d.provSumm||{};
+      allProviders=[...new Set(skuRows.map(function(r){return r.provider;}))].filter(Boolean).sort();
+      allStores=[...new Set(skuRows.map(function(r){return r.store;}))].filter(Boolean).sort();
+      setStatus('ok');
+      renderAll();
+      buildTargetRows();
+    }catch(e){}
   } else {
-    setSP('ps-idle','No data yet');
+    // No data for this month yet — sync from sheet
+    syncSheet();
   }
 }
-function setSP(cls,msg){var e=document.getElementById('savePill');e.className='pill-status '+cls;e.textContent=msg;}
-function showInfo(ts){if(!ts)return;var e=document.getElementById('infoBar');e.style.display='block';var d=new Date(ts);e.innerHTML='Last updated: <span>'+d.toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+'</span>';}
+
+// ── localStorage helpers ──
+function saveUrl(){}
+function saveSettings(){
+  var settings={ovProfit:document.getElementById('ovProfit').value,ovReal:document.getElementById('ovReal').value};
+  localStorage.setItem('mpr_settings',JSON.stringify(settings));
+}
+function saveTargets(){
+  localStorage.setItem('mpr_targets',JSON.stringify({provTgtP:provTgtP,provTgtR:provTgtR,provCost:provCost}));
+}
+function saveMonthData(){
+  var key='mpr_data_'+document.getElementById('monthSel').value;
+  localStorage.setItem(key,JSON.stringify({skuRows:skuRows,provSumm:provSumm}));
+}
+function loadSettings(){
+  sheetId='1oRyymp_9DQ8UXDMspVAONid6XfVWSWk61j0hkbZztBQ';
+  var s=localStorage.getItem('mpr_settings');
+  if(s){try{var d=JSON.parse(s);if(d.ovProfit)document.getElementById('ovProfit').value=d.ovProfit;if(d.ovReal)document.getElementById('ovReal').value=d.ovReal;}catch(e){}}
+  var t=localStorage.getItem('mpr_targets');
+  if(t){try{var d=JSON.parse(t);provTgtP=d.provTgtP||{};provTgtR=d.provTgtR||{};provCost=d.provCost||{};}catch(e){}}
+}
+
+function extractSheetId(url){
+  var m=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  return m?m[1]:'';
+}
+
+// ── Sync from Google Sheet ──
+async function syncSheet(){
+  sheetId='1oRyymp_9DQ8UXDMspVAONid6XfVWSWk61j0hkbZztBQ';
+  if(!sheetId){
+    showErr('Sheet ID not configured.');return;
+  }
+  setStatus('loading');
+  document.getElementById('syncBtn').disabled=true;
+  var csvUrl='https://docs.google.com/spreadsheets/d/'+sheetId+'/export?format=csv&gid=0';
+  try{
+    var resp=await fetch(csvUrl);
+    if(!resp.ok)throw new Error('Could not load sheet. Make sure it is set to "Anyone with link can view".');
+    var text=await resp.text();
+    var parsed=parseCSV(text);
+    if(!parsed.skus.length)throw new Error('No SKU data found. Check your sheet has data in cols A-F.');
+    skuRows=parsed.skus;provSumm=parsed.ps;
+    allProviders=[...new Set(skuRows.map(function(r){return r.provider;}))].filter(Boolean).sort();
+    allStores=[...new Set(skuRows.map(function(r){return r.store;}))].filter(Boolean).sort();
+    saveMonthData();
+    setStatus('ok');
+    renderAll();
+    buildTargetRows();
+    goTab('dash',document.querySelectorAll('.tab')[0]);
+    hideErr();
+  }catch(e){
+    setStatus('err');
+    showErr(e.message||'Failed to load sheet.');
+  }
+  document.getElementById('syncBtn').disabled=false;
+}
+
+function setStatus(s){var d=document.getElementById('statusDot');d.className='status-dot'+(s?' '+s:'');}
+function showErr(m){var e=document.getElementById('errMsg');e.textContent=m;e.style.display='block';}
+function hideErr(){document.getElementById('errMsg').style.display='none';}
+
+// ── Parse CSV ──
+function pm(s){if(s===null||s===undefined)return null;var v=parseFloat(String(s).replace(/[£,$,\s]/g,''));return isNaN(v)?null:v;}
+function pz(s){var v=pm(s);return v===null?0:v;}
+
+function parseCSV(raw){
+  var lines=raw.trim().split('\n').filter(function(l){return l.trim();});
+  if(!lines.length)return{skus:[],ps:{}};
+  // Detect separator
+  var sep=lines[0].indexOf('\t')>-1?'\t':',';
+  var skus=[],ps={},hdrDone=false;
+
+  for(var i=0;i<lines.length;i++){
+    var c=splitLine(lines[i],sep);
+    // Skip header
+    if(!hdrDone&&i===0){
+      if((c[0]||'').toLowerCase().indexOf('title')>-1||(c[3]||'').toLowerCase().replace(/[^a-z]/g,'').indexOf('profit')>-1){hdrDone=true;continue;}
+    }
+    var title=(c[0]||'').trim(),asin=(c[1]||'').trim(),sku=(c[2]||'').trim();
+    var pv=pm(c[3]),prov=(c[4]||'').trim(),store=(c[5]||'').trim()||'Unknown';
+    // Use col O (index 14) as store if available and non-empty
+    if(c[14]&&c[14].trim())store=c[14].trim();
+    if(title&&prov&&pv!==null)skus.push({title:title,asin:asin,sku:sku,profit:pv,provider:prov,store:store});
+    // Provider summary: col H=index 7, col I=index 8
+    var hv=(c[7]||'').trim(),ppv=pm(c[8]||'');
+    if(hv&&hv.toLowerCase()!=='provider tracker'&&hv!==''&&ppv!==null){
+      ps[hv]={provProfit:pz(c[8]),cost:pz(c[9]),realProfit:pm(c[10]),asins:parseInt(c[11])||0,bonus:(c[12]||'').trim()};
+    }
+  }
+  return{skus:skus,ps:ps};
+}
+
+function splitLine(line,sep){
+  if(sep==='\t')return line.split('\t').map(function(x){return x.replace(/^"|"$/g,'').trim();});
+  // CSV split respecting quotes
+  var result=[],cur='',inQ=false;
+  for(var i=0;i<line.length;i++){
+    var ch=line[i];
+    if(ch==='"'){inQ=!inQ;}
+    else if(ch===','&&!inQ){result.push(cur.trim());cur='';}
+    else cur+=ch;
+  }
+  result.push(cur.trim());
+  return result;
+}
 
 // ── Tabs ──
 function goTab(id,el){
@@ -378,87 +503,42 @@ function goTab(id,el){
   if(el)el.classList.add('active');
 }
 
-// ── Parse ──
-function pm(s){if(s===null||s===undefined)return null;var v=parseFloat(String(s).replace(/[£,\s]/g,''));return isNaN(v)?null:v;}
-function pz(s){var v=pm(s);return v===null?0:v;}
-
-function parseAll(raw){
-  var lines=raw.trim().split('\n').filter(function(l){return l.trim();});
-  if(!lines.length)return{skus:[],ps:{}};
-  var sep=lines[0].indexOf('\t')>-1?'\t':',';
-  var skus=[],ps={},hdr=false;
-  for(var i=0;i<lines.length;i++){
-    var c=lines[i].split(sep).map(function(x){return x.trim().replace(/^"|"$/g,'');});
-    if(!hdr&&i===0&&((c[0]||'').toLowerCase().indexOf('title')>-1||(c[3]||'').toLowerCase().replace(/[^a-z]/g,'').indexOf('profit')>-1)){hdr=true;continue;}
-    var title=(c[0]||'').trim(),asin=(c[1]||'').trim(),sku=(c[2]||'').trim();
-    var pv=pm(c[3]),prov=(c[4]||'').trim();
-    var storeCol=(c[5]||'').trim(),storeTrk=(c[14]||'').trim();
-    var store=storeTrk||storeCol||'Unknown';
-    if(title&&prov&&pv!==null)skus.push({title:title,asin:asin,sku:sku,profit:pv,provider:prov,store:store});
-    var hv=(c[7]||'').trim(),ppv=pm(c[8]||'');
-    if(hv&&hv.toLowerCase()!=='provider tracker'&&hv.toLowerCase()!=='n/a'&&ppv!==null){
-      ps[hv]={provProfit:pz(c[8]),cost:pz(c[9]),realProfit:pm(c[10]),asins:pz(c[11]),bonus:(c[12]||'').trim()};
-    }
-  }
-  return{skus:skus,ps:ps};
+// ── Target rows ──
+function syncOverall(){
+  var v1=document.getElementById('ovProfit2');
+  var v2=document.getElementById('ovReal2');
+  var p=document.getElementById('ovProfit');
+  var r=document.getElementById('ovReal');
+  if(v1&&p){p.value=v1.value;}
+  if(v2&&r){r.value=v2.value;}
+  saveSettings();renderAll();
 }
-
-// ── Events ──
-document.getElementById('pasteArea').addEventListener('input',onPaste);
-document.getElementById('csvFile').addEventListener('change',function(e){
-  var f=e.target.files[0];if(!f)return;
-  var r=new FileReader();r.onload=function(ev){document.getElementById('pasteArea').value=ev.target.result;onPaste();};r.readAsText(f);
-});
-
-function onPaste(){
-  var res=parseAll(document.getElementById('pasteArea').value);
-  if(!res.skus.length)return;
-  skuRows=res.skus;provSumm=res.ps;
-  allProviders=[...new Set(skuRows.map(function(r){return r.provider;}))].filter(Boolean).sort();
-  allStores=[...new Set(skuRows.map(function(r){return r.store;}))].filter(Boolean).sort();
-  var pb=document.getElementById('pvBox');pb.style.display='block';
-  var psN=Object.keys(provSumm).length;
-  document.getElementById('pvRow').innerHTML=
-    '<div class="pi">SKUs: <span>'+skuRows.length+'</span></div>'+
-    '<div class="pi">Providers: <span>'+allProviders.length+'</span></div>'+
-    '<div class="pi">Stores: <span>'+allStores.length+'</span></div>'+
-    '<div class="pi">Provider summary rows: <span>'+psN+'</span>'+(psN===0?'&nbsp;<span style="color:var(--warn);font-size:10px;">⚠ include cols H–O</span>':'')+'</div>';
-  buildTargetRows();
-  document.getElementById('tgtSection').classList.remove('hidden');
-}
-
 function buildTargetRows(){
   var html='';
   allProviders.forEach(function(p){
-    var va=isVA(p);
-    var ps=provSumm[p]||{};
-    var runCost=provCost[p]||'';
-    var netPreview=ps.provProfit!==undefined&&runCost!==''?fmt(ps.provProfit-parseFloat(runCost)):'—';
+    var va=isVA(p),ps=provSumm[p]||{};
+    var cost=provCost[p]||'';
+    var net=ps.provProfit!==undefined&&cost!==''?fmt(ps.provProfit-parseFloat(cost)):'—';
+    var netColor=ps.provProfit!==undefined&&cost!==''?(ps.provProfit-parseFloat(cost))>=0?'var(--accent)':'var(--danger)':'var(--muted)';
     html+='<div class="tgrid-row">'+
-      '<span class="pnm" title="'+p+'">'+p+(va?'<span class="va-tag">VA</span>':'')+'</span>'+
-      '<input class="tinput" id="tp_'+eid(p)+'" type="number" placeholder="£" value="'+(provTgtP[p]||'')+'">'+
-      '<input class="tinput" id="tr_'+eid(p)+'" type="number" placeholder="£" value="'+(provTgtR[p]||'')+'">'+
-      '<input class="tinput" id="tc_'+eid(p)+'" type="number" placeholder="£" value="'+(provCost[p]||'')+'" oninput="updateNetPreview(\''+eid(p)+'\',\''+p+'\')">'+
-      '<span class="mono" id="np_'+eid(p)+'" style="font-size:12px;'+(ps.provProfit!==undefined&&runCost!==''?(ps.provProfit-parseFloat(runCost||0))>=0?'color:var(--accent)':'color:var(--danger)':'color:var(--muted)')+'">'+netPreview+'</span>'+
+      '<span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(p)+(va?'<span class="va-tag">VA</span>':'')+'</span>'+
+      (va?'<input class="tinput" id="tp_'+eid(p)+'" type="number" placeholder="£" value="'+(provTgtP[p]||'')+'" oninput="readTargets()">':'<span style="color:var(--muted);font-size:11px;">—</span>')+
+      (va?'<input class="tinput" id="tr_'+eid(p)+'" type="number" placeholder="£" value="'+(provTgtR[p]||'')+'" oninput="readTargets()">':'<span style="color:var(--muted);font-size:11px;">—</span>')+
+      '<input class="tinput" id="tc_'+eid(p)+'" type="number" placeholder="£" value="'+(provCost[p]||'')+'" oninput="readTargets();updateNet(\''+eid(p)+'\',\''+p+'\')">'+
+      '<span id="np_'+eid(p)+'" class="mono" style="font-size:12px;color:'+netColor+';">'+net+'</span>'+
     '</div>';
   });
-  document.getElementById('provTargetRows').innerHTML=html;
+  var fallback='<p style="font-size:12px;color:var(--muted);padding:6px 0;">Load data to see providers.</p>';
+  document.getElementById('provTargetRows').innerHTML=html||fallback;
+  var el2=document.getElementById('provTargetRows2');
+  if(el2)el2.innerHTML=html||fallback;
 }
-
-function updateNetPreview(eid2,pname){
-  var costEl=document.getElementById('tc_'+eid2);
-  var npEl=document.getElementById('np_'+eid2);
-  var ps=provSumm[pname]||{};
-  var cost=parseFloat(costEl.value)||0;
-  if(ps.provProfit!==undefined){
-    var net=ps.provProfit-cost;
-    npEl.textContent=fmt(net);
-    npEl.style.color=net>=0?'var(--accent)':'var(--danger)';
-  } else {
-    npEl.textContent='—';npEl.style.color='var(--muted)';
-  }
+function updateNet(e,p){
+  var ci=document.getElementById('tc_'+e),ni=document.getElementById('np_'+e);
+  var ps=provSumm[p]||{};var cost=parseFloat(ci.value)||0;
+  if(ps.provProfit!==undefined){var net=ps.provProfit-cost;ni.textContent=fmt(net);ni.style.color=net>=0?'var(--accent)':'var(--danger)';}
+  else{ni.textContent='—';ni.style.color='var(--muted)';}
 }
-
 function eid(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
 function readTargets(){
   provTgtP={};provTgtR={};provCost={};
@@ -470,6 +550,8 @@ function readTargets(){
     if(ri&&ri.value!=='')provTgtR[p]=parseFloat(ri.value);
     if(ci&&ci.value!=='')provCost[p]=parseFloat(ci.value);
   });
+  saveTargets();
+  renderAll();
 }
 
 // ── Bonus ──
@@ -486,30 +568,10 @@ function calcBonus(pp){
 }
 function bbc(tier){var m={11:'t11',10:'t10',7:'t7',5:'t5',3:'t3',2:'t2',no:'tno',man:'tman',none:'tna'};return'badge '+(m[tier]||'tno');}
 
-// ── Save ──
-async function saveAndPublish(){
-  var errEl=document.getElementById('errMsg');errEl.style.display='none';
-  var res=parseAll(document.getElementById('pasteArea').value);
-  if(!res.skus.length){errEl.textContent='No SKU data found. Paste your sheet above.';errEl.style.display='block';return;}
-  skuRows=res.skus;provSumm=res.ps;
-  allProviders=[...new Set(skuRows.map(function(r){return r.provider;}))].filter(Boolean).sort();
-  allStores=[...new Set(skuRows.map(function(r){return r.store;}))].filter(Boolean).sort();
-  readTargets();
-  setSP('ps-saving','Saving…');
-  var payload={skuRows:skuRows,provSumm:provSumm,provTgtP:provTgtP,provTgtR:provTgtR,provCost:provCost,
-    ovProfit:document.getElementById('ovProfit').value,ovReal:document.getElementById('ovReal').value,
-    month:getMonthLabel(),updatedAt:new Date().toISOString()};
-  var ok=await saveShared('mpr_v3',payload);
-  setSP(ok?'ps-ok':'ps-idle',ok?'✓ Published · '+skuRows.length+' SKUs':'⚠ Save failed');
-  showInfo(payload.updatedAt);
-  renderAll();
-  goTab('dash',document.querySelectorAll('.tab')[1]);
-}
-
 // ── Aggregations ──
 function getProvTotals(){
   var t={};
-  skuRows.forEach(function(r){if(!t[r.provider])t[r.provider]={profit:0,skus:0};t[r.provider].profit+=r.profit;t[r.provider].skus++;});
+  skuRows.forEach(function(r){if(!t[r.provider])t[r.provider]={profit:0,skus:0,asins:new Set()};t[r.provider].profit+=r.profit;t[r.provider].skus++;if(r.asin)t[r.provider].asins.add(r.asin);});
   return t;
 }
 function getStoreTotals(){
@@ -517,13 +579,12 @@ function getStoreTotals(){
   skuRows.forEach(function(r){if(!t[r.store])t[r.store]={profit:0,skus:0};t[r.store].profit+=r.profit;t[r.store].skus++;});
   return t;
 }
+function uniqueAsins(){return new Set(skuRows.map(function(r){return r.asin;}).filter(Boolean)).size;}
 
 function renderAll(){
-  allProviders=[...new Set(skuRows.map(function(r){return r.provider;}))].filter(Boolean).sort();
-  allStores=[...new Set(skuRows.map(function(r){return r.store;}))].filter(Boolean).sort();
   var ovP=parseFloat(document.getElementById('ovProfit').value)||null;
   var ovR=parseFloat(document.getElementById('ovReal').value)||null;
-  renderOverview(ovP,ovR);renderProviders();renderBonus();renderSKUs();renderStores();
+  renderOverview(ovP,ovR);renderProviders();renderBonus();renderSKUs();renderStores();renderLavarion();
 }
 
 // ══ OVERVIEW ══
@@ -532,22 +593,22 @@ function renderOverview(ovP,ovR){
   var psVals=Object.values(provSumm);
   var totalR=psVals.reduce(function(a,p){return a+(p.realProfit!==null?p.realProfit:0);},0);
   var totalPP=psVals.reduce(function(a,p){return a+p.provProfit;},0);
-  // Net profit = total provider profit - total running costs
   var totalCost=Object.keys(provCost).reduce(function(a,k){return a+provCost[k];},0);
   var totalNet=totalPP-totalCost;
-  // VA bonus only
-  var totalBonus=VA_LIST.reduce(function(a,k){
-    if(!provSumm[k])return a;var b=calcBonus(provSumm[k].provProfit);return a+(b.amt||0);
-  },0);
+  var totalBonus=VA_LIST.reduce(function(a,k){if(!provSumm[k])return a;var b=calcBonus(provSumm[k].provProfit);return a+(b.amt||0);},0);
   var pPct=ovP?Math.round(totalP/ovP*100):null;
   var rPct=ovR?Math.round(totalR/ovR*100):null;
+  var uAsins=uniqueAsins();
 
-  document.getElementById('statsRow').innerHTML=
-    kc('g','Net Profit',fmtS(totalNet),totalCost>0?'after £'+totalCost.toFixed(0)+' running costs':'set costs in Import','')+ 
-    kc('b','Total Profit (col D)',fmtS(totalP),ovP?pPct+'% of '+fmt(ovP):skuRows.length+' SKUs',ovP?(totalP>=ovP?'g':'r'):'')+
-    kc('w','Real Profit (col K)',fmtS(totalR),ovR?rPct+'% of '+fmt(ovR):'from provider summary',ovR?(totalR>=ovR?'g':'r'):'')+
-    kc('p','VA Bonus Due',totalBonus>0?fmt(totalBonus):'£0','Almera &amp; Zette only','')+
-    kc('m','SKUs / Stores',skuRows.length,allProviders.length+' providers · '+allStores.length+' stores','');
+  document.getElementById('statsPanel').innerHTML=
+    '<div class="ph"><h2>This Month</h2><span class="ct">'+getMonthLabel()+'</span></div>'+
+    '<div class="stat-list">'+
+    srow('stat-accent','Net Profit',fmtS(totalNet),totalCost>0?'after £'+totalCost.toFixed(0)+' running costs':'set costs in Providers tab','')+
+    srow('stat-blue','Total Profit (col D)',fmtS(totalP),ovP?pPct+'% of '+fmt(ovP):skuRows.length+' SKUs',ovP?(totalP>=ovP?'g':'r'):'')+
+    srow('stat-warn','Real Profit (col K)',fmtS(totalR),ovR?rPct+'% of '+fmt(ovR):(psVals.length?'from provider summary':'no provider summary found'),ovR?(totalR>=ovR?'g':'r'):'')+
+    srow('stat-purple','VA Bonus Due',totalBonus>0?fmt(totalBonus):'£0','Almera &amp; Zette only','')+
+    srow('stat-muted','SKUs / Unique ASINs',skuRows.length+' / '+uAsins,allProviders.length+' providers · '+allStores.length+' stores','')+
+    '</div>';
 
   // Provider hit/miss
   var pt=getProvTotals(),pkeys=Object.keys(pt).sort(function(a,b){return pt[b].profit-pt[a].profit;});
@@ -555,31 +616,30 @@ function renderOverview(ovP,ovR){
   pkeys.forEach(function(p){if(provTgtP[p]!==undefined){if(pt[p].profit>=provTgtP[p])hit++;else miss++;}else noT++;});
   document.getElementById('provSummCard').innerHTML=
     '<div class="panel"><div class="ph"><h2>Provider Target Summary</h2><span class="ct">'+pkeys.length+' providers</span></div>'+
-    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:14px;">'+
-    sbox(hit,'Targets Hit','rgba(0,229,160,.08)','rgba(0,229,160,.2)','var(--accent)')+
-    sbox(miss,'Missed','rgba(239,68,68,.07)','rgba(239,68,68,.2)','var(--danger)')+
-    sbox(noT,'No Target','var(--s2)','var(--border)','var(--muted)')+
-    '</div></div>';
+    '<div class="stat-list">'+
+    srow('stat-accent','Targets Hit',hit,'providers above target','')+
+    srow('stat-muted','Missed',miss,'below target',miss>0?'r':'')+
+    srow('stat-muted','No Target Set',noT,'','')+'</div></div>';
 
   // Top 5 stores
   var st=getStoreTotals(),skeys=Object.keys(st).sort(function(a,b){return st[b].profit-st[a].profit;}).slice(0,5);
   var maxSP=Math.max.apply(null,skeys.map(function(s){return st[s].profit;}))||1;
   document.getElementById('storeSummCard').innerHTML=
-    '<div class="panel"><div class="ph"><h2>Top 5 Stores by Profit</h2><span class="ct">info only</span></div>'+
-    '<div style="padding:8px 0;">'+skeys.map(function(s){
+    '<div class="panel"><div class="ph"><h2>Top 5 Stores</h2><span class="ct">info only</span></div>'+
+    '<div class="stat-list">'+skeys.map(function(s){
       var pct=Math.min(Math.max(st[s].profit/maxSP*100,0),100);
-      return'<div style="display:flex;align-items:center;gap:12px;padding:6px 16px;">'+
-        '<span style="font-size:12px;width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(s)+'</span>'+
-        '<div style="flex:1;background:var(--s2);border-radius:3px;height:4px;overflow:hidden;"><div style="width:'+pct+'%;height:100%;background:var(--blue);border-radius:3px;"></div></div>'+
-        '<span class="mono" style="width:70px;text-align:right;font-size:11px;">'+fmt(st[s].profit)+'</span></div>';
+      return'<div class="stat-row stat-blue">'+
+        '<div><div style="font-size:12px;">'+esc(s)+'</div>'+
+        '<div class="prog" style="width:120px;margin-top:4px;"><div class="prog-fill pf-g" style="width:'+pct+'%"></div></div></div>'+
+        '<div class="mono" style="font-size:13px;">'+(st[s].profit>=0?'<span class="pos">':'<span class="neg">')+fmt(st[s].profit)+'</span></div></div>';
     }).join('')+'</div></div>';
 
-  // Top 10 SKUs
+  // Top 10
   var top10=[].concat(skuRows).sort(function(a,b){return b.profit-a.profit;}).slice(0,10);
   document.getElementById('top10Panel').innerHTML=
     '<div style="overflow-x:auto;"><table class="st"><thead><tr>'+
-    '<th style="width:36px;">#</th><th>Title</th><th>ASIN</th><th>SKU</th><th>Provider</th><th>Store</th>'+
-    '<th style="text-align:right;">Profit</th></tr></thead><tbody>'+
+    '<th>#</th><th>Title</th><th>ASIN</th><th>SKU</th><th>Provider</th><th>Store</th><th style="text-align:right;">Profit</th>'+
+    '</tr></thead><tbody>'+
     top10.map(function(r,i){return'<tr>'+
       '<td class="mono" style="color:var(--muted);">'+(i+1)+'</td>'+
       '<td class="ttc" title="'+esc(r.title)+'">'+esc(r.title)+'</td>'+
@@ -593,16 +653,18 @@ function renderOverview(ovP,ovR){
 
 // ══ PROVIDERS ══
 function renderProviders(){
-  var pt=getProvTotals(),pkeys=Object.keys(pt).sort(function(a,b){return pt[b].profit-pt[a].profit;});
+  var pt=getProvTotals();
+  // A-Z
+  var pkeys=Object.keys(pt).sort();
   document.getElementById('provCt').textContent=pkeys.length+' providers';
-  var thead='<thead><tr>'+
-    '<th>Provider</th><th class="r">SKUs</th>'+
-    '<th class="r">Profit (col D)</th><th style="min-width:155px;">vs Profit Target</th>'+
-    '<th class="r">Prov Profit (col I)</th><th class="r">Cost to Run</th>'+
-    '<th class="r" style="color:var(--accent);">Net Profit</th>'+
-    '<th class="r">Real Profit (col K)</th><th style="min-width:155px;">vs Real Target</th>'+
-    '<th class="r">ASINs</th><th>Bonus</th></tr></thead>';
-  var tbody=pkeys.map(function(k){
+
+  var hdr='<div class="prov-hdr">'+
+    '<span>Provider</span><span class="r">SKUs</span><span class="r">Profit (col D)</span>'+
+    '<span>vs Profit Target</span><span class="r">Prov Profit</span><span class="r">Cost</span>'+
+    '<span class="r" style="color:var(--accent);">Net Profit</span>'+
+    '<span>vs Real Target</span><span class="r">ASINs</span><span>Bonus</span></div>';
+
+  var rows=pkeys.map(function(k){
     var tP=provTgtP[k],tR=provTgtR[k],ps=provSumm[k]||{};
     var hitP=tP!==undefined?pt[k].profit>=tP:null;
     var pctP=tP?Math.min(pt[k].profit/tP*100,200):null;
@@ -613,71 +675,79 @@ function renderProviders(){
     var pp=ps.provProfit!==undefined?ps.provProfit:null;
     var netP=pp!==null&&runCost!==null?pp-runCost:null;
     var bonus=isVA(k)?calcBonus(pp):{lbl:'N/A',amt:null,tier:'none'};
-    return'<tr>'+
-      '<td><strong style="font-size:13px;">'+esc(k)+'</strong>'+(isVA(k)?'<span class="va-tag" style="margin-left:5px;">VA</span>':'')+'</td>'+
-      '<td class="mono tr">'+pt[k].skus+'</td>'+
-      '<td class="tr '+(pt[k].profit>=0?'pos':'neg')+'">'+fmt(pt[k].profit)+'</td>'+
-      '<td>'+tCell(tP,hitP,pctP)+'</td>'+
-      '<td class="tr '+(pp!==null?(pp>=0?'pos':'neg'):'')+'">'+
-        (pp!==null?fmt(pp):'<span style="color:var(--muted)">—</span>')+'</td>'+
-      '<td class="mono tr">'+(runCost!==null?fmt(runCost):'<span style="color:var(--muted)">—</span>')+'</td>'+
-      '<td class="tr" style="font-weight:700;">'+
-        (netP!==null?'<span style="color:'+(netP>=0?'var(--accent)':'var(--danger)')+';">'+fmt(netP)+'</span>':'<span style="color:var(--muted)">—</span>')+'</td>'+
-      '<td class="tr '+(realP!==null?(realP>=0?'pos':'neg'):'')+'">'+
-        (realP!==null?fmt(realP):'<span style="color:var(--muted)">—</span>')+'</td>'+
-      '<td>'+tCell(tR,hitR,pctR)+'</td>'+
-      '<td class="mono tr">'+(ps.asins||'—')+'</td>'+
-      '<td><span class="'+bbc(bonus.tier)+'">'+
+    var uAsins=pt[k].asins.size;
+    return'<div class="prov-item">'+
+      '<div class="prov-name">'+esc(k)+(isVA(k)?'<span class="va-tag" style="margin-left:5px;">VA</span>':'')+'</div>'+
+      '<div class="mono r">'+pt[k].skus+'</div>'+
+      '<div class="r '+(pt[k].profit>=0?'pos':'neg')+'">'+fmt(pt[k].profit)+'</div>'+
+      '<div>'+tCell(tP,hitP,pctP)+'</div>'+
+      '<div class="r '+(pp!==null?(pp>=0?'pos':'neg'):'')+'">'+
+        (pp!==null?fmt(pp):'<span style="color:var(--muted)">—</span>')+'</div>'+
+      '<div class="mono r">'+(runCost!==null?fmt(runCost):'<span style="color:var(--muted)">—</span>')+'</div>'+
+      '<div class="r" style="font-weight:700;">'+
+        (netP!==null?'<span style="color:'+(netP>=0?'var(--accent)':'var(--danger)')+';">'+fmt(netP)+'</span>':'<span style="color:var(--muted)">—</span>')+'</div>'+
+      '<div>'+tCell(tR,hitR,pctR)+'</div>'+
+      '<div class="mono r">'+uAsins+'</div>'+
+      '<div><span class="'+bbc(bonus.tier)+'">'+
         (bonus.tier==='none'?'Not VA':bonus.tier==='man'?'Manual':bonus.tier==='no'?'No bonus':
-          bonus.lbl+(bonus.amt!==null?' = '+fmt(bonus.amt):''))+'</span></td>'+
-    '</tr>';
+          bonus.lbl+(bonus.amt!==null?' = '+fmt(bonus.amt):''))+'</span></div>'+
+    '</div>';
   }).join('');
-  document.getElementById('provTable').innerHTML=thead+'<tbody>'+tbody+'</tbody>';
+  document.getElementById('provList').innerHTML=hdr+rows;
 }
 
 // ══ BONUS ══
 function renderBonus(){
   var vaProviders=[...new Set([...VA_LIST,...Object.keys(provSumm).filter(isVA)])].sort();
-  document.getElementById('bonusGrid').innerHTML=vaProviders.length?vaProviders.map(function(k){
-    var ps=provSumm[k]||{};
-    var pp=ps.provProfit!==undefined?ps.provProfit:null;
-    var b=calcBonus(pp);
-    var sb=ps.bonus||'';
+  var cards=vaProviders.map(function(k){
+    var ps=provSumm[k]||{},pp=ps.provProfit!==undefined?ps.provProfit:null;
+    var b=calcBonus(pp),sb=ps.bonus||'';
     var cl=b.tier==='no'?'No bonus':b.tier==='man'?'Manual review':b.lbl;
     var mm=sb&&sb.toLowerCase().replace(/\s/g,'')!==cl.toLowerCase().replace(/\s/g,'');
     var runCost=provCost[k]||null;
     var netBonus=b.amt!==null&&runCost!==null?b.amt-runCost:null;
-    var bgc=b.tier==='man'?'rgba(167,139,250,.07)':b.tier==='no'?'var(--s2)':
-      (b.tier==='11'||b.tier==='10')?'rgba(0,229,160,.05)':(b.tier==='7'||b.tier==='5')?'rgba(245,158,11,.05)':'rgba(239,68,68,.04)';
-    return'<div class="bcard" style="background:'+bgc+';">'+
-      '<div class="bp">'+esc(k)+' <span class="va-tag">VA</span></div>'+
-      '<div class="bv '+(b.amt&&b.amt>0?'pos':b.tier==='no'?'neg':'')+'">'+
-        (b.tier==='man'?'Review':b.tier==='no'?'£0':b.amt!==null?fmt(b.amt):'—')+'</div>'+
-      '<div class="bd">'+
-        (pp!==null?'Prov profit: '+fmt(pp):'No summary data')+'<br>'+
-        'Rate: <span class="'+bbc(b.tier)+'">'+b.lbl+'</span>'+
-        (sb?'<br>Sheet: '+esc(sb)+(mm?'&nbsp;<span class="badge b-flag">⚠ MISMATCH</span>':''):'')+
-        (runCost!==null?'<br>Cost to run: '+fmt(runCost)+(netBonus!==null?'<br>Net to pay: <strong style="color:'+(netBonus>=0?'var(--accent)':'var(--danger)')+';">'+fmt(netBonus)+'</strong>':''):'<br>Cost to run: not set')+
-      '</div></div>';
-  }).join(''):'<p style="padding:16px;font-size:12px;color:var(--muted);">No VA data. VA list: Almera, Zette.</p>';
+    return'<div style="display:flex;align-items:flex-start;justify-content:space-between;padding:12px 17px;border-bottom:1px solid var(--border);">'+
+      '<div>'+
+        '<div style="font-size:13px;font-weight:700;">'+esc(k)+'<span class="va-tag" style="margin-left:5px;">VA</span></div>'+
+        '<div style="font-size:11px;font-family:\'DM Mono\',monospace;color:var(--muted);margin-top:4px;line-height:1.8;">'+
+          (pp!==null?'Prov profit: '+fmt(pp):'No summary data')+'<br>'+
+          'Rate: <span class="'+bbc(b.tier)+'">'+b.lbl+'</span>'+(sb?'&nbsp;·&nbsp;Sheet: '+esc(sb)+(mm?'&nbsp;<span class="badge b-flag">⚠ MISMATCH</span>':''):'')+
+          (runCost!==null?'<br>Cost to run: '+fmt(runCost)+(netBonus!==null?'&nbsp;·&nbsp;Net to pay: <strong style="color:'+(netBonus>=0?'var(--accent)':'var(--danger)')+';">'+fmt(netBonus)+'</strong>':''):'<br>Cost to run: not set')+
+        '</div>'+
+      '</div>'+
+      '<div style="text-align:right;">'+
+        '<div style="font-family:\'Syne\',sans-serif;font-size:22px;font-weight:800;color:'+(b.tier==='no'?'var(--muted)':b.amt&&b.amt>0?'var(--accent)':'var(--muted)')+';">'+
+          (b.tier==='man'?'Review':b.tier==='no'?'£0':b.amt!==null?fmt(b.amt):'—')+'</div>'+
+        '<div style="font-size:10px;color:var(--muted);margin-top:2px;">gross bonus</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('bonusContent').innerHTML=cards||'<p style="font-size:12px;color:var(--muted);">No VA data. VAs: Almera, Zette.</p>';
 
   var flagged=vaProviders.filter(function(k){
     var ps=provSumm[k]||{},pp=ps.provProfit!==undefined?ps.provProfit:null;
-    var b=calcBonus(pp),cl=b.tier==='no'?'No bonus':b.tier==='man'?'Manual review':b.lbl;
-    var sb=ps.bonus||'';
+    var b=calcBonus(pp),cl=b.tier==='no'?'No bonus':b.tier==='man'?'Manual review':b.lbl,sb=ps.bonus||'';
     return sb&&sb.toLowerCase().replace(/\s/g,'')!==cl.toLowerCase().replace(/\s/g,'');
   });
   document.getElementById('flagCt').textContent=flagged.length+' mismatches';
-  document.getElementById('flagTable').innerHTML=!flagged.length?
-    '<tr><td style="padding:17px;font-size:12px;color:var(--accent);">✓ All bonus values match.</td></tr>':
-    '<thead><tr><th>Provider</th><th class="r">Prov Profit</th><th>Sheet</th><th>Calculated</th><th>Status</th></tr></thead><tbody>'+
+  var ft=document.getElementById('flagTable');
+  if(!flagged.length){ft.innerHTML='<tr><td style="padding:17px;font-size:12px;color:var(--accent);">✓ All bonus values match.</td></tr>';return;}
+  ft.innerHTML='<thead><tr>'+
+    '<th style="padding:9px 14px;font-size:10px;font-weight:700;color:var(--muted);background:var(--s2);border-bottom:1px solid var(--border);">Provider</th>'+
+    '<th style="padding:9px 14px;font-size:10px;font-weight:700;color:var(--muted);background:var(--s2);border-bottom:1px solid var(--border);text-align:right;">Prov Profit</th>'+
+    '<th style="padding:9px 14px;font-size:10px;font-weight:700;color:var(--muted);background:var(--s2);border-bottom:1px solid var(--border);">Sheet</th>'+
+    '<th style="padding:9px 14px;font-size:10px;font-weight:700;color:var(--muted);background:var(--s2);border-bottom:1px solid var(--border);">Calculated</th>'+
+    '<th style="padding:9px 14px;font-size:10px;font-weight:700;color:var(--muted);background:var(--s2);border-bottom:1px solid var(--border);">Status</th>'+
+    '</tr></thead><tbody>'+
     flagged.map(function(k){
       var ps=provSumm[k]||{},pp=ps.provProfit!==undefined?ps.provProfit:null;
       var b=calcBonus(pp),cl=b.tier==='no'?'No bonus':b.tier==='man'?'Manual review':b.lbl;
-      return'<tr><td><strong>'+esc(k)+'</strong></td><td class="mono tr">'+(pp!==null?fmt(pp):'—')+'</td>'+
-        '<td><span class="badge b-none">'+esc(ps.bonus||'—')+'</span></td>'+
-        '<td><span class="'+bbc(b.tier)+'">'+cl+'</span></td>'+
-        '<td><span class="badge b-flag">⚠ CHECK</span></td></tr>';
+      return'<tr>'+
+        '<td style="padding:10px 14px;border-bottom:1px solid rgba(42,47,61,.4);"><strong>'+esc(k)+'</strong></td>'+
+        '<td style="padding:10px 14px;border-bottom:1px solid rgba(42,47,61,.4);text-align:right;font-family:\'DM Mono\',monospace;font-size:12px;">'+(pp!==null?fmt(pp):'—')+'</td>'+
+        '<td style="padding:10px 14px;border-bottom:1px solid rgba(42,47,61,.4);"><span class="badge b-none">'+esc(ps.bonus||'—')+'</span></td>'+
+        '<td style="padding:10px 14px;border-bottom:1px solid rgba(42,47,61,.4);"><span class="'+bbc(b.tier)+'">'+cl+'</span></td>'+
+        '<td style="padding:10px 14px;border-bottom:1px solid rgba(42,47,61,.4);"><span class="badge b-flag">⚠ CHECK</span></td></tr>';
     }).join('')+'</tbody>';
 }
 
@@ -685,7 +755,7 @@ function renderBonus(){
 function renderSKUs(){
   document.getElementById('fp').innerHTML='<option value="">All providers</option>'+allProviders.map(function(p){return'<option>'+esc(p)+'</option>';}).join('');
   document.getElementById('fs').innerHTML='<option value="">All stores</option>'+allStores.map(function(s){return'<option>'+esc(s)+'</option>';}).join('');
-  document.getElementById('skuCt').textContent=skuRows.length+' SKUs';
+  document.getElementById('skuCt').textContent=skuRows.length+' SKUs · '+uniqueAsins()+' unique ASINs';
   filtered=[].concat(skuRows).sort(function(a,b){return b.profit-a.profit;});
   renderSKUTable();
 }
@@ -709,7 +779,7 @@ function doSort(){
 }
 function setSC(i){if(sortCol===i)sortDir*=-1;else{sortCol=i;sortDir=-1;}doSort();renderSKUTable();}
 function renderSKUTable(){
-  document.getElementById('fcnt').textContent=filtered.length+' of '+skuRows.length;
+  document.getElementById('fcnt').textContent=filtered.length+' of '+skuRows.length+' shown';
   var cols=[{l:'Title'},{l:'ASIN'},{l:'SKU'},{l:'Profit ↕'},{l:'Provider'},{l:'Store'}];
   var thead='<thead><tr>'+cols.map(function(c,i){
     return'<th class="'+(sortCol===i?'srt':'')+'" onclick="setSC('+i+')">'+c.l+
@@ -729,8 +799,7 @@ function renderSKUTable(){
   document.getElementById('skuTable').innerHTML=thead+tbody;
 }
 function editCell(el,idx,field){
-  var cur=skuRows[idx][field];
-  var opts=field==='provider'?allProviders:allStores;
+  var cur=skuRows[idx][field],opts=field==='provider'?allProviders:allStores;
   el.outerHTML='<select class="edit-sel" onchange="commitEdit(this,'+idx+',\''+field+'\')" onblur="blurEdit(this,'+idx+',\''+field+'\')">'+
     opts.map(function(o){return'<option'+(o===cur?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
 }
@@ -756,42 +825,117 @@ function renderStores(){
   }).join('');
 }
 
+// ══ LAVARION ══
+function renderLavarion(){
+  var lavRows=skuRows.filter(function(r){return r.provider==='Lavarion';});
+  if(!lavRows.length){
+    ['lavStats','lavSkuTable','lavMarginList','lavStoreGrid','lavAsinList'].forEach(function(id){
+      var e=document.getElementById(id);if(e)e.innerHTML='<p class="empty">No Lavarion SKUs found.</p>';
+    });
+    return;
+  }
+  var totalP=lavRows.reduce(function(a,r){return a+r.profit;},0);
+  var uAsins=new Set(lavRows.map(function(r){return r.asin;}).filter(Boolean)).size;
+  var avgMargin=lavRows.length>0?(totalP/lavRows.length):0;
+  var topSku=lavRows.reduce(function(a,b){return b.profit>a.profit?b:a;},lavRows[0]);
+
+  document.getElementById('lavStats').innerHTML=
+    '<div class="lav-kc"><div class="lk">Total Profit</div><div class="lv">'+fmtS(totalP)+'</div><div class="ls">own brand</div></div>'+
+    '<div class="lav-kc"><div class="lk">SKUs</div><div class="lv">'+lavRows.length+'</div><div class="ls">'+uAsins+' unique ASINs</div></div>'+
+    '<div class="lav-kc"><div class="lk">Avg Profit / SKU</div><div class="lv">'+fmt(avgMargin)+'</div><div class="ls">per listing</div></div>'+
+    '<div class="lav-kc"><div class="lk">Top SKU</div><div class="lv">'+fmt(topSku.profit)+'</div><div class="ls" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(topSku.title)+'">'+esc(topSku.title.substring(0,30))+'…</div></div>';
+
+  // Top SKUs table
+  var top=[].concat(lavRows).sort(function(a,b){return b.profit-a.profit;}).slice(0,20);
+  document.getElementById('lavSkuCt').textContent=lavRows.length+' SKUs';
+  document.getElementById('lavSkuTable').innerHTML=
+    '<thead><tr><th>#</th><th>Title</th><th>ASIN</th><th style="text-align:right;">Profit</th><th>Store</th></tr></thead><tbody>'+
+    top.map(function(r,i){return'<tr>'+
+      '<td class="mono" style="color:var(--muted);">'+(i+1)+'</td>'+
+      '<td class="ttc" title="'+esc(r.title)+'">'+esc(r.title)+'</td>'+
+      '<td class="mono" style="font-size:11px;color:var(--muted);">'+(r.asin||'—')+'</td>'+
+      '<td class="tr '+(r.profit>=0?'pos':'neg')+'">'+fmt(r.profit)+'</td>'+
+      '<td><span class="pill" style="cursor:default;border-color:rgba(244,114,182,.3);color:var(--lav);">'+esc(r.store)+'</span></td></tr>';
+    }).join('')+'</tbody>';
+
+  // Margin per product (by ASIN — deduped)
+  var asinMap={};
+  lavRows.forEach(function(r){
+    if(!r.asin)return;
+    if(!asinMap[r.asin])asinMap[r.asin]={title:r.title,profit:0,skus:0};
+    asinMap[r.asin].profit+=r.profit;asinMap[r.asin].skus++;
+  });
+  var asinList=Object.keys(asinMap).map(function(a){return{asin:a,title:asinMap[a].title,profit:asinMap[a].profit,skus:asinMap[a].skus};}).sort(function(a,b){return b.profit-a.profit;});
+  var maxP=asinList.length?asinList[0].profit:1;
+  document.getElementById('lavMarginList').innerHTML=asinList.map(function(a){
+    var pct=Math.min(Math.max(a.profit/maxP*100,0),100);
+    return'<div style="padding:10px 17px;border-bottom:1px solid rgba(42,47,61,.4);">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'+
+      '<span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;" title="'+esc(a.title)+'">'+esc(a.title.substring(0,35))+'</span>'+
+      '<span class="mono '+(a.profit>=0?'pos':'neg')+'" style="font-size:13px;">'+fmt(a.profit)+'</span></div>'+
+      '<div class="margin-bar"><div class="margin-fill" style="width:'+pct+'%"></div></div>'+
+      '<div style="font-size:10px;color:var(--muted);margin-top:3px;">'+a.asin+' · '+a.skus+' SKU'+(a.skus>1?'s':'')+'</div></div>';
+  }).join('');
+
+  // Store breakdown for Lavarion
+  var lavSt={};
+  lavRows.forEach(function(r){if(!lavSt[r.store])lavSt[r.store]={profit:0,skus:0};lavSt[r.store].profit+=r.profit;lavSt[r.store].skus++;});
+  var lavStKeys=Object.keys(lavSt).sort(function(a,b){return lavSt[b].profit-lavSt[a].profit;});
+  document.getElementById('lavStoreGrid').innerHTML=lavStKeys.map(function(s){
+    return'<div class="scard" style="border-top:2px solid var(--lav);">'+
+      '<div class="sn">'+esc(s)+'</div>'+
+      '<div class="sv '+(lavSt[s].profit>=0?'pos':'neg')+'">'+fmt(lavSt[s].profit)+'</div>'+
+      '<div class="ss">'+lavSt[s].skus+' SKUs</div></div>';
+  }).join('');
+
+  // Unique ASINs
+  document.getElementById('lavAsinCt').textContent=uAsins+' unique ASINs';
+  document.getElementById('lavAsinList').innerHTML=asinList.map(function(a){
+    return'<div style="background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">'+
+      '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--lav);">'+esc(a.asin)+'</div>'+
+      '<div style="font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(a.title)+'">'+esc(a.title.substring(0,28))+'</div>'+
+      '<div style="font-family:\'Syne\',sans-serif;font-size:15px;font-weight:800;margin-top:4px;color:'+(a.profit>=0?'var(--accent)':'var(--danger)')+';">'+fmt(a.profit)+'</div>'+
+      '<div style="font-size:10px;color:var(--muted);margin-top:1px;">'+a.skus+' order'+(a.skus>1?'s':'')+'</div></div>';
+  }).join('');
+}
+
 // ── Helpers ──
 function fmt(n){if(n===null||n===undefined)return'—';var s=n<0?'-':'';return s+'£'+Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
 function fmtS(n){var s=n<0?'-':'';var a=Math.abs(n);if(a>=1000)return s+'£'+(a/1000).toFixed(1)+'k';return s+'£'+a.toFixed(0);}
-function kc(cls,lbl,val,sub,sc){return'<div class="kc '+cls+'"><div class="kl">'+lbl+'</div><div class="kv">'+val+'</div><div class="ks '+sc+'">'+sub+'</div></div>';}
-function sbox(n,lbl,bg,bdr,color){return'<div style="background:'+bg+';border:1px solid '+bdr+';border-radius:8px;padding:12px;text-align:center;"><div style="font-family:\'Syne\',sans-serif;font-size:26px;font-weight:800;color:'+color+';">'+n+'</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">'+lbl+'</div></div>';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function getMonthLabel(){var v=document.getElementById('monthSel').value.split('-');return v.length<2?'':new Date(v[0],v[1]-1,1).toLocaleString('default',{month:'long',year:'numeric'});}
+function srow(cls,lbl,val,sub,sc){return'<div class="stat-row '+cls+'"><div><div class="sl">'+lbl+'</div><div class="sb '+sc+'">'+sub+'</div></div><div style="text-align:right;"><div class="sv">'+val+'</div></div></div>';}
 function tCell(target,hit,pct){
   if(target===undefined)return'<span class="badge b-none">No target</span>';
-  return'<div class="tc-wrap">'+
-    '<div class="tc-top"><span class="badge '+(hit?'b-hit':'b-miss')+'">'+(hit?'HIT':'MISS')+'</span>'+
+  return'<div style="min-width:130px;">'+
+    '<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;">'+
+    '<span class="badge '+(hit?'b-hit':'b-miss')+'">'+(hit?'HIT':'MISS')+'</span>'+
     '<span class="mono" style="font-size:10px;color:var(--muted);">'+Math.round(pct)+'%</span></div>'+
     '<div class="prog"><div class="prog-fill '+(hit?'pf-g':'pf-r')+'" style="width:'+Math.min(pct,100)+'%"></div></div>'+
-    '<div class="tc-sub">Target: '+fmt(target)+'</div></div>';
+    '<div style="font-size:10px;color:var(--muted);margin-top:2px;">Target: '+fmt(target)+'</div></div>';
 }
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-// ── Sample ──
-function loadSample(){
-  document.getElementById('pasteArea').value=
-'Title\tAsin\tSku\tProfit\tProvider\tStore\t\tProvider Tracker\tProvider Profit\tCost\tReal Profit\tAsins\tBonus\t\tStore Tracker\n'+
-'Hisense 50 QLED Smart AI TV\tB0F7WCBMJZ\tAmuk_249_FFB_01\t\xA3152.14\tFFB\tAmazon UK\t\tJack\t1278.11\t2500\t-1221.89\t63\t\t\tAmazon Spain\n'+
-'Zesty Lemon Cake Kit\tB0F3Y17P2X\tCU-3ZM4-44X3\t\xA3150.80\tLavarion\tN/A\t\tZette\t850.00\t100\t750.00\t12\t2.5%\t\tBodycare\n'+
-'Paco Rabanne Olympea 80ml\tB08M9F528R\tQog_49.7_Jac_17\t\xA3149.79\tJack\tQogita\t\tAlmera\t920.00\t200\t720.00\t41\tNo bonus\t\tQogita\n'+
-'Crucial DDR5 RAM 64GB\tB0DSR14511\tAmuk_394_HOR2_1\t\xA3146.36\tHOR\tAmazon UK\t\tSPP\t118.10\t0\t118.10\t12\t\t\tAmazon Germany\n'+
-'Viviscal Biotin Hair\tB09ZV5NB9K\tTFTJ_36_TFTJ_12\t\xA3141.37\tTFTJ\tAmazon UK\t\tPPA2A\t47.49\t0\t47.49\t3\t\t\tDelicias\n'+
-'Lavarion Pancake Nutella\tB0DRK8TXB9\tKF-ZHB3-NDUL\t\xA3139.92\tLavarion\tN/A\t\tArbi\t741.34\t750\t-8.66\t41\tNo bonus\t\tFabfinds\n'+
-'LG 32LQ63806LC TV\tB0D17VJPSD\tTHC_149_THC_04\t\xA3117.49\tTHC\tAmazon UK\t\tReplen\t1385.60\t0\t1385.60\t87\t\t\tIherb\n'+
-'Crucial DDR5 16GB\tB0BLTGMCB7\tAmuk_69_THC3_02\t\xA3112.90\tTHC\tAmazon UK\t\tTHC\t827.83\t60\t767.83\t23\t\t\tJustmylook\n'+
-'Wedding Confetti Cones\tB0G8R16QMB\t3Q-IBYX-60JS\t\xA3104.71\tLavarion\tN/A\t\tFFB\t280.83\t39.99\t240.84\t12\t\t\tMiele\n'+
-'Breville Barista Machine\tB0DGK2B3QT\tCurrys_398_Jac_01\t\xA3102.48\tJack\tCurrys\t\tHOR\t963.30\t50\t913.30\t12\t\t\tNotino\n'+
-'Corsair Vengeance RGB RAM\tB08SQRF8MJ\tAmuk_74_THC_1\t\xA385.04\tTHC\tAmazon UK\t\tTFTJ\t1575.29\t0\t1575.29\t47\t\t\tPoundfun\n'+
-'AOC CU34V5CW Monitor\tB0B5PKS1W9\tAmuk_197_PS_02\t\xA384.16\tPS\tAmazon UK\t\tPS\t174.19\t79.99\t94.20\t9\t\t\tQogita\n'+
-'BISSELL ProHeat 2X\tB07C78HWM5\tAmuk_181_VAA_02\t\xA382.33\tAlmera\tAmazon UK\t\t\t\t\t\t\t\t\tRayburn\n'+
-'Garmin Forerunner 165\tB0CT3VBDTV\tArg_159_TFTJ_3\t\xA373.90\tTFTJ\tArgos\t\t\t\t\t\t\t\t\tSkinnyfood\n'+
-'Philips Sonicare\tB0FJ2N61YM\tAmuk_69_Jac_04\t\xA373.25\tJack\tAmazon UK\t\t\t\t\t\t\t\t\tSuperdrug\n'+
-'STANLEY Quencher\tB0DFWX1YG3\tAmuk_22_THC3_10\t\xA369.79\tTHC\tAmazon UK\t\t\t\t\t\t\t\t\tWhittard';
-  onPaste();
+// ── Init ──
+function init(){
+  loadSettings();
+  // Try to load cached data for current month
+  var key='mpr_data_'+document.getElementById('monthSel').value;
+  var cached=localStorage.getItem(key);
+  if(cached){
+    try{
+      var d=JSON.parse(cached);
+      skuRows=d.skuRows||[];provSumm=d.provSumm||{};
+      allProviders=[...new Set(skuRows.map(function(r){return r.provider;}))].filter(Boolean).sort();
+      allStores=[...new Set(skuRows.map(function(r){return r.store;}))].filter(Boolean).sort();
+      setStatus('ok');
+      renderAll();
+      buildTargetRows();
+      goTab('dash',document.querySelectorAll('.tab')[0]);
+    }catch(e){setStatus('');}
+  } else {
+    setStatus('');
+  }
+  document.getElementById('loadScr').style.display='none';
 }
 
 init();
